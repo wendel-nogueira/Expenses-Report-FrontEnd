@@ -422,6 +422,9 @@ import { Component, ViewEncapsulation } from '@angular/core';
             <span> Hello there, </span>
             Welcome handson 👋
           </h1>
+          <h1 class="text-3xl font-bold underline">
+            Hello world!
+          </h1>
         </div>
         <!--  HERO  -->
         <div id="hero" class="rounded">
@@ -850,4 +853,4 @@ nx affected:e2e</pre>
   styles: [],
   encapsulation: ViewEncapsulation.None,
 })
-export class NxWelcomeComponent {}
+export class NxWelcomeComponent { }
