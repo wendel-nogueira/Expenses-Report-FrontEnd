@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "footer": ["libs/ui/master-page/src/lib/footer/src/index.ts"],
       "header": ["libs/ui/master-page/src/lib/header/src/index.ts"],
       "master-page": ["libs/ui/master-page/src/index.ts"]
     }
