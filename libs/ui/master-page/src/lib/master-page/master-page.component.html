@@ -1,2 +1,21 @@
-<p>master-page works!</p>
-<router-outlet></router-outlet>
+<mat-sidenav-container
+  class="min-h-screen"
+  style="background: #fafafa"
+  autosize
+  (window:resize)="onResize($event)"
+>
+  <mat-sidenav
+    opened
+    mode="side"
+    class="h-full min-w-fit max-w-max w-full"
+    style="border: none; background: none"
+  >
+    <lib-header></lib-header>
+  </mat-sidenav>
+  <mat-sidenav-content class="flex flex-col py-4 px-4 w-auto">
+    <div>
+      <router-outlet></router-outlet>
+    </div>
+    <lib-footer></lib-footer>
+  </mat-sidenav-content>
+</mat-sidenav-container>
