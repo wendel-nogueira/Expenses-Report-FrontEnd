@@ -15,13 +15,18 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@handson/input-search": [
+        "libs/ui/forms/input-search/input-search.component.ts"
+      ],
+      "@handson/table": ["libs/ui/data-table/table/table.component.ts"],
       "footer": ["libs/ui/master-page/src/lib/footer/src/index.ts"],
       "header": ["libs/ui/master-page/src/lib/header/src/index.ts"],
       "header-mobile": [
         "libs/ui/master-page/src/lib/header-mobile/src/index.ts"
       ],
-      "master-page": ["libs/ui/master-page/src/index.ts"]
+      "master-page": ["libs/ui/master-page/src/index.ts"],
+      "users": ["libs/ui/users/src/index.ts"]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "tmp"],
 }

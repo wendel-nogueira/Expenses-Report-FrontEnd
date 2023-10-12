@@ -8,35 +8,87 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  title = 'handson';
+  title = 'expenses report';
 
   constructor(
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer
   ) {
     this.matIconRegistry.addSvgIcon(
-      "arrow_line_left",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/arrow-line-left-light.svg")
+      'arrow_line_left',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/arrow-line-left-bold.svg'
+      )
     );
     this.matIconRegistry.addSvgIcon(
-      "arrow_line_right",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/arrow-line-right-light.svg")
+      'arrow_line_right',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/arrow-line-right-bold.svg'
+      )
     );
     this.matIconRegistry.addSvgIcon(
-      "buildings",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/buildings-light.svg")
+      'buildings',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/buildings-bold.svg'
+      )
     );
     this.matIconRegistry.addSvgIcon(
-      "folder",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/folder-light.svg")
+      'folder',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/folder-bold.svg'
+      )
     );
     this.matIconRegistry.addSvgIcon(
-      "receipt",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/receipt-light.svg")
+      'receipt',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/receipt-bold.svg'
+      )
     );
     this.matIconRegistry.addSvgIcon(
-      "users",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/users-light.svg")
+      'users',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/users-regular.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'house',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/house-regular.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'search',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/magnifying-glass-bold.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'add',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/plus-bold.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'cancel',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/x-bold.svg')
+    );
+    this.matIconRegistry.addSvgIcon(
+      'edit',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/pencil-light.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'trash',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/trash-bold.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'check',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/check-bold.svg'
+      )
     );
   }
 }

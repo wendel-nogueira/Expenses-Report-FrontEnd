@@ -23,7 +23,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 export class MasterPageComponent {
   isMobile = false;
 
-  onResize(event: UIEvent) {
+  onResize() {
     this.isMobile = window.innerWidth <= 768;
   }
 }

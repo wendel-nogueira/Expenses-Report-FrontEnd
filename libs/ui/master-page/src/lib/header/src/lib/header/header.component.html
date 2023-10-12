@@ -1,10 +1,10 @@
 <div
-  class="flex flex-col gap-14 h-full py-8 rounded-r-md bg-blue-400 {{
+  class="flex flex-col gap-14 h-full py-8 bg-blue-700 {{
     collapsed ? 'w-min' : 'w-60'
   }}"
 >
   <div class="flex items-center justify-between px-4 h-16">
-    <div class="transition {{ collapsed ? 'hidden' : 'block' }}">
+    <div class="{{ collapsed ? 'hidden' : 'block' }}">
       <h2 style="margin: 0">
         <span class="font-medium text-white block">Expenses Report</span>
       </h2>
@@ -21,20 +21,39 @@
   </div>
 
   <mat-list class="py-0 px-0 flex flex-row">
-    <mat-list-item
-      style="padding: 0; height: fit-content"
-      class="bg-violet-400 border-l-2 border-transparent hover:border-white hover:bg-blue-300 transition-all"
-    >
-      <div
-        class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+    <a [routerLink]="['/']">
+      <mat-list-item
+        style="padding: 0; height: fit-content"
+        class="bg-violet-400 border-l-2 border-transparent hover:border-white hover:bg-blue-600 transition-all"
       >
-        <div class="w-8 h-8 flex flex-row items-center justify-center">
-          <mat-icon svgIcon="users"></mat-icon>
+        <div
+          class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+        >
+          <div class="w-8 h-8 flex flex-row items-center justify-center">
+            <mat-icon svgIcon="house"></mat-icon>
+          </div>
+          <div class="transition {{ collapsed ? 'hidden' : 'block' }}">
+            <p class="m-0 font-light text-slate-200" style="margin: 0">home</p>
+          </div>
         </div>
-        <div class="transition {{ collapsed ? 'hidden' : 'block' }}">
-          <p class="m-0 font-light text-menu-white" style="margin: 0">users</p>
+      </mat-list-item>
+    </a>
+    <a [routerLink]="['/users']">
+      <mat-list-item
+        style="padding: 0; height: fit-content"
+        class="bg-violet-400 border-l-2 border-transparent hover:border-white hover:bg-blue-600 transition-all"
+      >
+        <div
+          class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+        >
+          <div class="w-8 h-8 flex flex-row items-center justify-center">
+            <mat-icon svgIcon="users"></mat-icon>
+          </div>
+          <div class="transition {{ collapsed ? 'hidden' : 'block' }}">
+            <p class="m-0 font-light text-slate-200" style="margin: 0">users</p>
+          </div>
         </div>
-      </div>
-    </mat-list-item>
+      </mat-list-item>
+    </a>
   </mat-list>
 </div>
