@@ -1,0 +1,56 @@
+<div class="mat-elevation-z1 bg-white w-full">
+  <table mat-table [dataSource]="dataSource" class="w-full">
+    <ng-container
+      *ngFor="let column of tableColumns"
+      [matColumnDef]="column.name"
+      class="w-full"
+    >
+      <th mat-header-cell *matHeaderCellDef>{{ column.label }}</th>
+
+      <td mat-cell *matCellDef="let element">
+        <ng-container *ngIf="column.name !== 'actions'">
+          {{ element[column.name] }}
+        </ng-container>
+
+        <ng-container *ngIf="column.name === 'actions'">
+          <div class="flex flex-row gap-2 items-center justify-center">
+            <a [routerLink]="[element[column.name]['href']]">
+              <button
+                mat-icon-button
+                class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 {{
+                  element[column.name]['style']
+                }}"
+              >
+                <mat-icon
+                  svgIcon="{{ element[column.name]['icon'] }}"
+                  class="svg-white"
+                ></mat-icon>
+              </button>
+            </a>
+          </div>
+        </ng-container>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="tableColumnsNames"></tr>
+    <tr mat-row *matRowDef="let row; columns: tableColumnsNames"></tr>
+  </table>
+
+  <div class="flex flex-row justify-center items-center mt-5 mb-5" *ngIf="loading">
+    <mat-spinner [diameter]="50"></mat-spinner>
+  </div>
+
+  <div
+    class="flex flex-row justify-center items-center mt-5 mb-5"
+    *ngIf="!loading && dataSource.data.length === 0"
+  >
+    <span class="text-gray-700">No data found</span>
+  </div>
+
+  <mat-paginator
+    [pageSizeOptions]="pageSizeOptions"
+    showFirstLastButtons
+    aria-label="[ariaLabel]"
+  >
+  </mat-paginator>
+</div>

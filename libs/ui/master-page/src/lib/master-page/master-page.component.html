@@ -1,18 +1,23 @@
 <mat-sidenav-container
-  class="min-h-screen"
-  style="background: #fafafa"
+  class="min-h-screen bg-slate-50"
   autosize
-  (window:resize)="onResize($event)"
+  (window:resize)="onResize()"
+  style="background-color: #f2f2f2"
 >
   <mat-sidenav
     opened
+    disableClose
+    [fixedInViewport]="true"
     mode="side"
-    class="h-full min-w-fit max-w-max w-full"
-    style="border: none; background: none"
+    class="h-full min-w-fit max-w-max w-full mat-elevation-z8"
+    style="border: none; background: red"
   >
     <lib-header></lib-header>
   </mat-sidenav>
-  <mat-sidenav-content class="flex flex-col py-4 px-4 w-auto">
+  <mat-sidenav-content
+    class="flex flex-col justify-between py-4 px-4 w-auto min-h-screen"
+    style="display: flex"
+  >
     <div>
       <router-outlet></router-outlet>
     </div>
