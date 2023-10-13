@@ -102,5 +102,11 @@ export class AppComponent {
         '../assets/eye-slash.svg'
       )
     );
+    this.matIconRegistry.addSvgIcon(
+      'sign-out',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/sign-out.svg'
+      )
+    );
   }
 }
