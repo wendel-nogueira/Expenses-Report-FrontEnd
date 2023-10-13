@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
 import { User } from '../../models/User';
@@ -16,10 +12,6 @@ export class UserService {
   constructor(private httpClient: HttpClient) {}
 
   apiURL = environment.userApiUrl;
-
-  httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-  };
 
   getUsers(): Observable<User[]> {
     return this.httpClient
@@ -41,7 +33,7 @@ export class UserService {
 
   updateUser(id: string, user: User): Observable<User> {
     return this.httpClient
-      .put<User>(`${this.apiURL}/${id}`, JSON.stringify(user), this.httpOptions)
+      .put<User>(`${this.apiURL}/${id}`, JSON.stringify(user))
       .pipe(retry(2), catchError(this.handleError));
   }
 
@@ -53,19 +45,13 @@ export class UserService {
 
   addSupervisor(id: string, supervisorId: string): Observable<void> {
     return this.httpClient
-      .post<void>(
-        `${this.apiURL}/${id}/supervisors/${supervisorId}`,
-        this.httpOptions
-      )
+      .post<void>(`${this.apiURL}/${id}/supervisors/${supervisorId}`, null)
       .pipe(retry(2), catchError(this.handleError));
   }
 
   removeSupervisor(id: string, supervisorId: string): Observable<void> {
     return this.httpClient
-      .delete<void>(
-        `${this.apiURL}/${id}/supervisors/${supervisorId}`,
-        this.httpOptions
-      )
+      .delete<void>(`${this.apiURL}/${id}/supervisors/${supervisorId}`)
       .pipe(retry(2), catchError(this.handleError));
   }
 
