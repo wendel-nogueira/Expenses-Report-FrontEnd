@@ -24,9 +24,10 @@
       "header-mobile": [
         "libs/ui/master-page/src/lib/header-mobile/src/index.ts"
       ],
+      "login": ["libs/ui/login/src/index.ts"],
       "master-page": ["libs/ui/master-page/src/index.ts"],
       "users": ["libs/ui/users/src/index.ts"]
     }
   },
-  "exclude": ["node_modules", "tmp"],
+  "exclude": ["node_modules", "tmp"]
 }

@@ -90,5 +90,17 @@ export class AppComponent {
         '../assets/check-bold.svg'
       )
     );
+    this.matIconRegistry.addSvgIcon(
+      'eye',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/eye.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'eye-slash',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/eye-slash.svg'
+      )
+    );
   }
 }

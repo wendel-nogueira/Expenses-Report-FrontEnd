@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import {
   HttpClient,
   HttpErrorResponse,
-  HttpHeaders,
 } from '@angular/common/http';
 import { EMPTY, Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
@@ -17,10 +16,6 @@ export class IdentityService {
   constructor(private httpClient: HttpClient) {}
 
   apiURL = environment.identityApiUrl;
-
-  httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-  };
 
   getIdentities(): Observable<Identity[]> {
     return this.httpClient
@@ -50,7 +45,7 @@ export class IdentityService {
 
   createIdentity(identity: Identity): Observable<Identity> {
     return this.httpClient
-      .post<Identity>(this.apiURL, JSON.stringify(identity), this.httpOptions)
+      .post<Identity>(this.apiURL, JSON.stringify(identity))
       .pipe(
         catchError(() => {
           return EMPTY;
@@ -64,23 +59,19 @@ export class IdentityService {
     };
 
     return this.httpClient
-      .put<Identity>(
-        `${this.apiURL}/${id}/role`,
-        JSON.stringify(body),
-        this.httpOptions
-      )
+      .put<Identity>(`${this.apiURL}/${id}/role`, JSON.stringify(body))
       .pipe(retry(2), catchError(this.handleError));
   }
 
   activateIdentity(id: string): Observable<Identity> {
     return this.httpClient
-      .put<Identity>(`${this.apiURL}/${id}/deleted`, this.httpOptions)
+      .put<Identity>(`${this.apiURL}/${id}/deleted`, null)
       .pipe(retry(2), catchError(this.handleError));
   }
 
   deleteIdentity(id: string): Observable<Identity> {
     return this.httpClient
-      .delete<Identity>(`${this.apiURL}/${id}`, this.httpOptions)
+      .delete<Identity>(`${this.apiURL}/${id}`)
       .pipe(retry(2), catchError(this.handleError));
   }
 
