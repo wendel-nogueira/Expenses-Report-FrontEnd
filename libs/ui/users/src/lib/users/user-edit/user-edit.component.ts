@@ -184,7 +184,7 @@ export class UserEditComponent implements OnInit {
     this.userService
       .getSupervisors(this.user?.id as string)
       .subscribe((supervisors) => {
-        this.userSupervisors = supervisors.map((supervisor) => supervisor.id);
+        this.userSupervisors = supervisors.map((supervisor) => supervisor.id as string);
 
         this.supervisorsFormControl.setValue(this.userSupervisors);
       });

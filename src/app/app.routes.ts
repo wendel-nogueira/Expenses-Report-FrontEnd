@@ -14,4 +14,9 @@ export const appRoutes: Route[] = [
         loadComponent: () => import('change-password').then(m => m.ChangePasswordComponent),
         pathMatch: 'full'
     },
+    {
+        path: 'update-user',
+        loadComponent: () => import('update-user').then(m => m.UpdateUserComponent),
+        pathMatch: 'full'
+    },
 ];

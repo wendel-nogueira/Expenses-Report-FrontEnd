@@ -1,0 +1,204 @@
+<div>
+  <form class="w-full flex flex-col gap-5" *ngIf="!loading && user && identity">
+    <div class="flex items-center gap-3">
+      <mat-form-field class="w-full">
+        <mat-label>First Name</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="firstNameFormControl"
+          [errorStateMatcher]="matcher"
+          placeholder="Ex. John"
+          minlength="2"
+          maxlength="50"
+          name="firstName"
+        />
+        <mat-error
+          *ngIf="
+            firstNameFormControl.hasError('minlength') ||
+            firstNameFormControl.hasError('maxlength')
+          "
+          class="font-normal text-xs mt-1"
+        >
+          First Name must be between <strong class="font-bold">2</strong> and
+          <strong class="font-bold">50</strong> characters
+        </mat-error>
+        <mat-error
+          *ngIf="firstNameFormControl.hasError('required')"
+          class="font-normal text-xs mt-1"
+        >
+          First Name is <strong class="font-bold">required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-full">
+        <mat-label>Last Name</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="lastNameFormControl"
+          [errorStateMatcher]="matcher"
+          placeholder="Ex. Doe"
+          minlength="2"
+          maxlength="50"
+          name="lastName"
+        />
+        <mat-error
+          *ngIf="
+            lastNameFormControl.hasError('minlength') ||
+            lastNameFormControl.hasError('maxlength')
+          "
+          class="font-normal text-xs mt-1"
+        >
+          Last Name must be between <strong class="font-bold">2</strong> and
+          <strong class="font-bold">50</strong> characters
+        </mat-error>
+        <mat-error
+          *ngIf="lastNameFormControl.hasError('required')"
+          class="font-normal text-xs mt-1"
+        >
+          Last Name is <strong class="font-bold">required</strong>
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <mat-form-field class="w-full">
+        <mat-label>Zip</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="zipFormControl"
+          [errorStateMatcher]="matcher"
+          placeholder="Ex. 12345"
+          minlength="2"
+          maxlength="10"
+          (input)="formatZip()"
+          (change)="onChangeZip()"
+          name="zip"
+        />
+        <mat-error
+          *ngIf="
+            zipFormControl.hasError('minlength') ||
+            zipFormControl.hasError('maxlength')
+          "
+          class="font-normal text-xs mt-1"
+        >
+          Zip must be between <strong class="font-bold">2</strong> and
+          <strong class="font-bold">10</strong> characters
+        </mat-error>
+        <mat-error
+          *ngIf="zipFormControl.hasError('required')"
+          class="font-normal text-xs mt-1"
+        >
+          Zip is <strong class="font-bold">required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="w-full">
+        <mat-label>Country</mat-label>
+        <mat-select
+          [formControl]="countryFormControl"
+          [errorStateMatcher]="matcher"
+          (selectionChange)="onChangeCountry(null)"
+        >
+          <mat-option *ngFor="let country of countries" [value]="country.name">
+            {{ country.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="countryFormControl.hasError('required')"
+          class="font-normal text-xs mt-1"
+          >Country is <strong class="font-bold">required</strong></mat-error
+        >
+      </mat-form-field>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <mat-form-field class="w-full">
+        <mat-label>State</mat-label>
+        <mat-select
+          [formControl]="stateFormControl"
+          [errorStateMatcher]="matcher"
+          (selectionChange)="onChangeState(null)"
+        >
+          <mat-option *ngFor="let state of states" [value]="state.name">
+            {{ state.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="stateFormControl.hasError('required')"
+          class="font-normal text-xs mt-1"
+          >State is <strong class="font-bold">required</strong></mat-error
+        >
+      </mat-form-field>
+      <mat-form-field class="w-full">
+        <mat-label>City</mat-label>
+        <mat-select
+          [formControl]="cityFormControl"
+          [errorStateMatcher]="matcher"
+        >
+          <mat-option *ngFor="let city of cities" [value]="city">
+            {{ city }}
+          </mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="cityFormControl.hasError('required')"
+          class="font-normal text-xs mt-1"
+          >City is <strong class="font-bold">required</strong></mat-error
+        >
+      </mat-form-field>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <mat-form-field class="w-full">
+        <mat-label>Address</mat-label>
+        <input
+          type="text"
+          matInput
+          [formControl]="addressFormControl"
+          [errorStateMatcher]="matcher"
+          placeholder="Ex. 1234 Main St"
+          minlength="2"
+          maxlength="50"
+          name="address"
+        />
+        <mat-error
+          *ngIf="
+            addressFormControl.hasError('minlength') ||
+            addressFormControl.hasError('maxlength')
+          "
+          class="font-normal text-xs mt-1"
+        >
+          Address must be between <strong class="font-bold">2</strong> and
+          <strong class="font-bold">50</strong> characters
+        </mat-error>
+        <mat-error
+          *ngIf="addressFormControl.hasError('required')"
+          class="font-normal text-xs mt-1"
+        >
+          Address is <strong class="font-bold">required</strong>
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="flex items-center justify-center gap-8">
+      <button
+        mat-flat-button
+        class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 bg-blue-400 hover:bg-blue-500 mat-elevation-z2"
+        type="submit"
+        (click)="onSubmit()"
+      >
+        <mat-icon svgIcon="edit" class="text-white"></mat-icon>
+        <span class="ml-2">update informations</span>
+      </button>
+    </div>
+  </form>
+  <div class="flex flex-col items-center justify-center" *ngIf="loading">
+    <mat-spinner
+      *ngIf="loading"
+      class="w-16 h-16 text-center mx-auto"
+      [diameter]="60"
+      [strokeWidth]="5"
+    ></mat-spinner>
+  </div>
+</div>

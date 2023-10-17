@@ -25,9 +25,14 @@
       "header-mobile": [
         "libs/ui/master-page/src/lib/header-mobile/src/index.ts"
       ],
+      "informations": [
+        "libs/ui/profile/src/lib/profile/informations/src/index.ts"
+      ],
       "login": ["libs/ui/login/src/index.ts"],
       "master-page": ["libs/ui/master-page/src/index.ts"],
+      "profile": ["libs/ui/profile/src/index.ts"],
       "reset-password": ["libs/ui/reset-password/src/index.ts"],
+      "update-user": ["libs/ui/update-user/src/index.ts"],
       "users": ["libs/ui/users/src/index.ts"]
     }
   },

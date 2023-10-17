@@ -1,0 +1,24 @@
+#update-user {
+  background: #f2f2f2;
+}
+
+#next {
+  background: rgb(74 222 128);
+  color: white;
+  margin-top: 20px;
+}
+
+#next:hover {
+  background: rgb(34 197 94);
+}
+
+#back {
+  background: rgb(248 113 113);
+  color: white;
+
+  margin-top: 20px;
+}
+
+#back:hover {
+  background: rgb(239 68 68);
+}

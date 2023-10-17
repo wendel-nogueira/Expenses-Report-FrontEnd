@@ -1,0 +1,7 @@
+#profile {
+    min-height: calc(100vh - 64px);
+}
+
+#profile mat-sidenav-content {
+    min-height: 480px;
+}
