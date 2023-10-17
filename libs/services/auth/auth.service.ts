@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { EMPTY, Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
 import { environment } from './../../../src/environments/environment.development';
@@ -30,7 +34,11 @@ export class AuthService {
     };
 
     return this.httpClient
-      .post<LoginResponse>(`${this.apiURL}/login`, JSON.stringify(body), this.httpOptions)
+      .post<LoginResponse>(
+        `${this.apiURL}/login`,
+        JSON.stringify(body),
+        this.httpOptions
+      )
       .pipe(retry(2), catchError(this.handleError));
   }
 
@@ -60,6 +68,39 @@ export class AuthService {
         return EMPTY;
       })
     );
+  }
+
+  sendResetPasswordEmail(email: string): Observable<void> {
+    const body = {
+      email,
+    };
+
+    return this.httpClient
+      .post<void>(
+        `${this.apiURL}/password/reset`,
+        JSON.stringify(body),
+        this.httpOptions
+      )
+      .pipe(retry(2), catchError(this.handleError));
+  }
+
+  changePassword(
+    token: string,
+    password: string,
+    confirmPassword: string
+  ): Observable<void> {
+    const body = {
+      newPassword: password,
+      repeatNewPassword: confirmPassword,
+    };
+
+    return this.httpClient
+      .put<void>(
+        `${this.apiURL}/password?token=${token}`,
+        JSON.stringify(body),
+        this.httpOptions
+      )
+      .pipe(retry(2), catchError(this.handleError));
   }
 
   handleError(error: HttpErrorResponse) {

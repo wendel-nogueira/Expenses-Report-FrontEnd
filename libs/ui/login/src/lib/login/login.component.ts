@@ -35,7 +35,9 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class LoginComponent {
   hide = true;
-  loading = false;
+  loadingLogin = false;
+  loadingResetPassword = false;
+  isResetPassword = false;
   isMobile = false;
 
   constructor(private authService: AuthService, private router: Router) {}
@@ -67,11 +69,11 @@ export class LoginComponent {
     const email = this.emailFormControl.value as string;
     const password = this.passwordFormControl.value as string;
 
-    this.loading = true;
+    this.loadingLogin = true;
 
     this.authService.login(email, password).subscribe(
       (response) => {
-        this.loading = false;
+        this.loadingLogin = false;
 
         if (!response.token) return;
 
@@ -82,7 +84,33 @@ export class LoginComponent {
         }
       },
       () => {
-        this.loading = false;
+        this.loadingLogin = false;
+      }
+    );
+  }
+
+  resetPasswordFormControl = new FormControl('', [
+    Validators.required,
+    Validators.email,
+    Validators.minLength(2),
+    Validators.maxLength(50),
+    Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$'),
+  ]);
+
+  onSubmitResetPassword() {
+    if (this.resetPasswordFormControl.invalid) return;
+
+    this.loadingResetPassword = true;
+
+    const email = this.resetPasswordFormControl.value as string;
+
+    this.authService.sendResetPasswordEmail(email).subscribe(
+      () => {
+        this.loadingResetPassword = false;
+        this.isResetPassword = false;
+      },
+      () => {
+        this.loadingLogin = false;
       }
     );
   }
