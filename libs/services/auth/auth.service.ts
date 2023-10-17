@@ -1,11 +1,16 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { EMPTY, Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
 import { environment } from './../../../src/environments/environment.development';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Identity } from '../../models/Identity';
+import { TokenIdentity } from './../../models/TokenIdentity';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +35,11 @@ export class AuthService {
     };
 
     return this.httpClient
-      .post<LoginResponse>(`${this.apiURL}/login`, JSON.stringify(body), this.httpOptions)
+      .post<LoginResponse>(
+        `${this.apiURL}/login`,
+        JSON.stringify(body),
+        this.httpOptions
+      )
       .pipe(retry(2), catchError(this.handleError));
   }
 
@@ -54,12 +63,65 @@ export class AuthService {
     return token;
   }
 
+  getIdentity(): TokenIdentity | void {
+    const token = this.getSession();
+
+    if (!token) return;
+
+    return this.jwtHelper.decodeToken(token) as TokenIdentity;
+  }
+
   me(): Observable<Identity> {
     return this.httpClient.get<Identity>(`${this.apiURL}/me`).pipe(
       catchError(() => {
         return EMPTY;
       })
     );
+  }
+
+  sendResetPasswordEmail(email: string): Observable<void> {
+    const body = {
+      email,
+    };
+
+    return this.httpClient
+      .post<void>(
+        `${this.apiURL}/password/reset`,
+        JSON.stringify(body),
+        this.httpOptions
+      )
+      .pipe(retry(2), catchError(this.handleError));
+  }
+
+  changePassword(
+    token: string,
+    password: string,
+    confirmPassword: string
+  ): Observable<void> {
+    const body = {
+      newPassword: password,
+      repeatNewPassword: confirmPassword,
+    };
+
+    return this.httpClient
+      .put<void>(
+        `${this.apiURL}/password?token=${token}`,
+        JSON.stringify(body),
+        this.httpOptions
+      )
+      .pipe(retry(2), catchError(this.handleError));
+  }
+
+  changeEmail(email: string): Observable<void> {
+    const body = {
+      newEmail: email,
+    };
+
+    console.log(`${this.apiURL}/email`);
+
+    return this.httpClient
+      .put<void>(`${this.apiURL}/email`, JSON.stringify(body))
+      .pipe(retry(2), catchError(this.handleError));
   }
 
   handleError(error: HttpErrorResponse) {

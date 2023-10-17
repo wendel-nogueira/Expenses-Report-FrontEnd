@@ -1,0 +1,51 @@
+<div id="profile" class="w-full flex items-center justify-center">
+  <div class="py-4 px-6 bg-white shadow-md rounded-lg w-3/5">
+    <h1 class="text-xl text-center font-bold text-blue-500 mb-6">Profile</h1>
+    <mat-sidenav-container autosize (window:resize)="onResize()" class="h-min">
+      <mat-sidenav
+        opened
+        disableClose
+        mode="side"
+        class="mat-elevation-z8 h-auto w-36"
+      >
+        <mat-list class="flex flex-row h-full w-full">
+          <mat-list-item
+            style="padding: 0; height: fit-content"
+            class="border-l-2 border-transparent hover:bg-gray-200 transition-all w-full"
+            (click)="selected = 'informations'"
+          >
+            <div
+              class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+            >
+              <p class="m-0 font-light text-gray-700" style="margin: 0">
+                informations
+              </p>
+            </div>
+          </mat-list-item>
+          <mat-list-item
+            style="padding: 0; height: fit-content"
+            class="border-l-2 border-transparent hover:bg-gray-200 transition-all w-full"
+            (click)="selected = 'security'"
+          >
+            <div
+              class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+            >
+              <p class="m-0 font-light text-gray-700" style="margin: 0">
+                security
+              </p>
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </mat-sidenav>
+      <mat-sidenav-content
+        class="flex flex-col justify-between py-4 px-4 w-auto"
+        style="display: flex; background: white"
+      >
+        <lib-informations
+          *ngIf="selected === 'informations'"
+        ></lib-informations>
+        <lib-security *ngIf="selected === 'security'"></lib-security>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
+</div>

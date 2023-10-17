@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
 import { User } from '../../models/User';
@@ -12,6 +12,10 @@ export class UserService {
   constructor(private httpClient: HttpClient) {}
 
   apiURL = environment.userApiUrl;
+
+  httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+  };
 
   getUsers(): Observable<User[]> {
     return this.httpClient
@@ -28,6 +32,12 @@ export class UserService {
   getUserByIdentityId(id: string): Observable<User> {
     return this.httpClient
       .get<User>(`${this.apiURL}/identity/${id}`)
+      .pipe(retry(2), catchError(this.handleError));
+  }
+
+  createUser(user: User): Observable<User> {
+    return this.httpClient
+      .post<User>(this.apiURL, JSON.stringify(user), this.httpOptions)
       .pipe(retry(2), catchError(this.handleError));
   }
 

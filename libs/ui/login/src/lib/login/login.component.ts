@@ -1,6 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import {
   FormControl,
@@ -15,6 +15,8 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from 'libs/services/auth/auth.service';
 import { Router, RouterModule } from '@angular/router';
+import { UserService } from 'libs/services/user/user.service';
+import { TokenIdentity } from 'libs/models/TokenIdentity';
 
 @Component({
   selector: 'lib-login',
@@ -31,14 +33,21 @@ import { Router, RouterModule } from '@angular/router';
     ReactiveFormsModule,
     MatProgressSpinnerModule,
     RouterModule,
+    NgIf,
   ],
 })
 export class LoginComponent {
   hide = true;
-  loading = false;
+  loadingLogin = false;
+  loadingResetPassword = false;
+  isResetPassword = false;
   isMobile = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+    private router: Router
+  ) {}
 
   onResize() {
     this.isMobile = window.innerWidth <= 768;
@@ -67,22 +76,59 @@ export class LoginComponent {
     const email = this.emailFormControl.value as string;
     const password = this.passwordFormControl.value as string;
 
-    this.loading = true;
+    this.loadingLogin = true;
 
     this.authService.login(email, password).subscribe(
       (response) => {
-        this.loading = false;
+        this.loadingLogin = false;
 
         if (!response.token) return;
 
         this.authService.createSession(response.token);
 
-        if (this.authService.getSession()) {
-          this.router.navigate(['/']);
-        }
+        const identity = this.authService.getIdentity() as TokenIdentity;
+
+        this.userService.getUserByIdentityId(identity.nameid).subscribe(
+          () => {
+            if (this.authService.getSession()) {
+              this.router.navigate(['/']);
+            }
+          },
+          () => {
+            if (this.authService.getSession()) {
+              this.router.navigate(['/update-user']);
+            }
+          }
+        );
       },
       () => {
-        this.loading = false;
+        this.loadingLogin = false;
+      }
+    );
+  }
+
+  resetPasswordFormControl = new FormControl('', [
+    Validators.required,
+    Validators.email,
+    Validators.minLength(2),
+    Validators.maxLength(50),
+    Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$'),
+  ]);
+
+  onSubmitResetPassword() {
+    if (this.resetPasswordFormControl.invalid) return;
+
+    this.loadingResetPassword = true;
+
+    const email = this.resetPasswordFormControl.value as string;
+
+    this.authService.sendResetPasswordEmail(email).subscribe(
+      () => {
+        this.loadingResetPassword = false;
+        this.isResetPassword = false;
+      },
+      () => {
+        this.loadingLogin = false;
       }
     );
   }

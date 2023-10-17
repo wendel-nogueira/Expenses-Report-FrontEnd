@@ -8,135 +8,214 @@
   <mat-sidenav-content
     class="w-3/5 min-h-screen flex flex-col items-center justify-center"
   >
-    <div
-      class="flex flex-col py-4 px-6 bg-white shadow-md rounded-lg gap-8 w-min"
-    >
-      <div>
-        <h1 class="text-xl text-center font-bold text-blue-500 mb-2">Login</h1>
-        <p class="text-center font-light text-slate-500">
-          use your email and password to sign in!
-        </p>
-      </div>
-      <div class="w-96">
+    <div class="py-4 px-6 bg-white shadow-md rounded-lg w-min">
+      <div *ngIf="!isResetPassword" class="flex flex-col gap-8">
         <div>
-          <form class="flex flex-col gap-5">
-            <mat-form-field>
-              <mat-label>Email</mat-label>
-              <input
-                type="email"
-                matInput
-                [formControl]="emailFormControl"
-                [errorStateMatcher]="matcher"
-                placeholder="Ex. jhon_doe@email.com"
-                minlength="2"
-                maxlength="50"
-                name="email"
-              />
-              <mat-error
-                *ngIf="
-                  !emailFormControl.hasError('pattern') &&
-                  !emailFormControl.hasError('email') &&
-                  !emailFormControl.hasError('required') &&
-                  !emailFormControl.hasError('minlength') &&
-                  !emailFormControl.hasError('maxlength')
-                "
-                class="font-normal text-xs mt-1"
-              >
-                Email already exists
-              </mat-error>
-              <mat-error
-                *ngIf="emailFormControl.hasError('pattern')"
-                class="font-normal text-xs mt-1"
-              >
-                Please enter a valid email address
-              </mat-error>
-              <mat-error
-                *ngIf="
-                  emailFormControl.hasError('minlength') ||
-                  emailFormControl.hasError('maxlength')
-                "
-                class="font-normal text-xs mt-1"
-              >
-                Email must be between <strong class="font-bold">2</strong> and
-                <strong class="font-bold">50</strong> characters
-              </mat-error>
-              <mat-error
-                *ngIf="emailFormControl.hasError('required')"
-                class="font-normal text-xs mt-1"
-              >
-                Email is <strong class="font-bold">required</strong>
-              </mat-error>
-            </mat-form-field>
-            <mat-form-field>
-              <mat-label>Password</mat-label>
-              <input
-                matInput
-                [formControl]="passwordFormControl"
-                [errorStateMatcher]="matcher"
-                placeholder="Ex. 123456"
-                minlength="6"
-                maxlength="50"
-                name="password"
-                [type]="hide ? 'password' : 'text'"
-              />
-              <button
-                mat-icon-button
-                matSuffix
-                (click)="hide = !hide"
-                [attr.aria-label]="'Hide password'"
-                [attr.aria-pressed]="hide"
-              >
-                <mat-icon>{{
-                  hide ? 'visibility_off' : 'visibility'
-                }}</mat-icon>
-              </button>
-              <mat-error
-                *ngIf="
-                  passwordFormControl.hasError('minlength') ||
-                  passwordFormControl.hasError('maxlength')
-                "
-                class="font-normal text-xs mt-1"
-              >
-                Password must be between
-                <strong class="font-bold">6</strong> and
-                <strong class="font-bold">50</strong> characters
-              </mat-error>
-              <mat-error
-                *ngIf="passwordFormControl.hasError('required')"
-                class="font-normal text-xs mt-1"
-              >
-                Password is <strong class="font-bold">required</strong>
-              </mat-error>
-            </mat-form-field>
+          <h1 class="text-xl text-center font-bold text-blue-500 mb-2">
+            Login
+          </h1>
+          <p class="text-center font-light text-slate-500">
+            use your email and password to sign in!
+          </p>
+        </div>
+        <div class="w-96">
+          <div>
+            <form class="flex flex-col gap-5">
+              <mat-form-field>
+                <mat-label>Email</mat-label>
+                <input
+                  type="email"
+                  matInput
+                  [formControl]="emailFormControl"
+                  [errorStateMatcher]="matcher"
+                  placeholder="Ex. jhon_doe@email.com"
+                  minlength="2"
+                  maxlength="50"
+                  name="email"
+                />
+                <mat-error
+                  *ngIf="emailFormControl.hasError('pattern')"
+                  class="font-normal text-xs mt-1"
+                >
+                  Please enter a valid email address
+                </mat-error>
+                <mat-error
+                  *ngIf="
+                    emailFormControl.hasError('minlength') ||
+                    emailFormControl.hasError('maxlength')
+                  "
+                  class="font-normal text-xs mt-1"
+                >
+                  Email must be between <strong class="font-bold">2</strong> and
+                  <strong class="font-bold">50</strong> characters
+                </mat-error>
+                <mat-error
+                  *ngIf="emailFormControl.hasError('required')"
+                  class="font-normal text-xs mt-1"
+                >
+                  Email is <strong class="font-bold">required</strong>
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Password</mat-label>
+                <input
+                  matInput
+                  [formControl]="passwordFormControl"
+                  [errorStateMatcher]="matcher"
+                  placeholder="Ex. 123456"
+                  minlength="6"
+                  maxlength="50"
+                  name="password"
+                  [type]="hide ? 'password' : 'text'"
+                />
+                <button
+                  mat-icon-button
+                  matSuffix
+                  (click)="hide = !hide"
+                  [attr.aria-label]="'Hide password'"
+                  [attr.aria-pressed]="hide"
+                >
+                  <mat-icon>{{
+                    hide ? 'visibility_off' : 'visibility'
+                  }}</mat-icon>
+                </button>
+                <mat-error
+                  *ngIf="
+                    passwordFormControl.hasError('minlength') ||
+                    passwordFormControl.hasError('maxlength')
+                  "
+                  class="font-normal text-xs mt-1"
+                >
+                  Password must be between
+                  <strong class="font-bold">6</strong> and
+                  <strong class="font-bold">50</strong> characters
+                </mat-error>
+                <mat-error
+                  *ngIf="passwordFormControl.hasError('required')"
+                  class="font-normal text-xs mt-1"
+                >
+                  Password is <strong class="font-bold">required</strong>
+                </mat-error>
+              </mat-form-field>
 
-            <a
-              class="text-blue-500 text-sm hover:underline cursor-pointer ml-auto"
-              [routerLink]="['/auth/forgot-password']"
-            >
-              Forgot password?
-            </a>
-
-            <div class="flex items-center justify-center gap-8">
-              <button
-                mat-flat-button
-                class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 mat-elevation-z2 w-2/6 {{
-                  !loading ? 'bg-green-400 hover:bg-green-500' : 'bg-gray-200'
-                }}"
-                type="submit"
-                (click)="onSubmit()"
-                [disabled]="loading"
+              <p
+                class="text-blue-500 text-sm hover:underline cursor-pointer ml-auto"
+                (click)="isResetPassword = true"
               >
-                <div class="h-6 w-full flex items-center justify-center">
-                  <span *ngIf="!loading">login</span>
-                  <mat-spinner
-                    *ngIf="loading"
-                    diameter="20"
-                    mode="indeterminate"
-                  ></mat-spinner>
-                </div>
-              </button>
-            </div>
-          </form>
+                Forgot password?
+              </p>
+
+              <div class="flex items-center justify-center gap-8">
+                <button
+                  mat-flat-button
+                  class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-6 mat-elevation-z2 {{
+                    !loadingLogin
+                      ? 'bg-green-400 hover:bg-green-500'
+                      : 'bg-gray-200'
+                  }}"
+                  type="submit"
+                  (click)="onSubmit()"
+                  [disabled]="loadingLogin"
+                >
+                  <div class="h-6 w-full flex items-center justify-center">
+                    <span *ngIf="!loadingLogin">login</span>
+                    <mat-spinner
+                      *ngIf="loadingLogin"
+                      diameter="20"
+                      mode="indeterminate"
+                    ></mat-spinner>
+                  </div>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="isResetPassword" class="flex flex-col gap-8">
+        <div>
+          <h1 class="text-xl text-center font-bold text-blue-500 mb-2">
+            Reset Password
+          </h1>
+          <p class="text-center font-light text-slate-500">
+            enter your email to reset your password!
+          </p>
+        </div>
+        <div class="w-96">
+          <div>
+            <form class="flex flex-col gap-5">
+              <mat-form-field>
+                <mat-label>Email</mat-label>
+                <input
+                  type="email"
+                  matInput
+                  [formControl]="resetPasswordFormControl"
+                  [errorStateMatcher]="matcher"
+                  placeholder="Ex. jhon_doe@email.com"
+                  minlength="2"
+                  maxlength="50"
+                  name="email"
+                />
+                <mat-error
+                  *ngIf="resetPasswordFormControl.hasError('pattern')"
+                  class="font-normal text-xs mt-1"
+                >
+                  Please enter a valid email address
+                </mat-error>
+                <mat-error
+                  *ngIf="
+                    resetPasswordFormControl.hasError('minlength') ||
+                    resetPasswordFormControl.hasError('maxlength')
+                  "
+                  class="font-normal text-xs mt-1"
+                >
+                  Email must be between <strong class="font-bold">2</strong> and
+                  <strong class="font-bold">50</strong> characters
+                </mat-error>
+                <mat-error
+                  *ngIf="resetPasswordFormControl.hasError('required')"
+                  class="font-normal text-xs mt-1"
+                >
+                  Email is <strong class="font-bold">required</strong>
+                </mat-error>
+              </mat-form-field>
+
+              <div class="flex items-center justify-center gap-8">
+                <button
+                  mat-flat-button
+                  class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-6 mat-elevation-z2 {{
+                    !loadingResetPassword
+                      ? 'bg-green-400 hover:bg-green-500'
+                      : 'bg-gray-200'
+                  }}"
+                  type="submit"
+                  (click)="onSubmitResetPassword()"
+                  [disabled]="loadingResetPassword"
+                >
+                  <div class="h-6 w-full flex items-center justify-center">
+                    <span *ngIf="!loadingResetPassword">send</span>
+                    <mat-spinner
+                      *ngIf="loadingResetPassword"
+                      diameter="20"
+                      mode="indeterminate"
+                    ></mat-spinner>
+                  </div>
+                </button>
+                <button
+                  mat-flat-button
+                  class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-6 mat-elevation-z2 bg-red-400 hover:bg-red-500"
+                  (click)="
+                    isResetPassword = false;
+                    resetPasswordFormControl.reset();
+                    loadingResetPassword = false
+                  "
+                >
+                  <div class="h-6 w-full flex items-center justify-center">
+                    <span>cancel</span>
+                  </div>
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>

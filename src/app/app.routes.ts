@@ -9,4 +9,14 @@ export const appRoutes: Route[] = [
         path: 'login',
         loadChildren: () => import('login').then(m => m.loginRoutes)
     },
+    {
+        path: 'change-password/:token',
+        loadComponent: () => import('change-password').then(m => m.ChangePasswordComponent),
+        pathMatch: 'full'
+    },
+    {
+        path: 'update-user',
+        loadComponent: () => import('update-user').then(m => m.UpdateUserComponent),
+        pathMatch: 'full'
+    },
 ];
