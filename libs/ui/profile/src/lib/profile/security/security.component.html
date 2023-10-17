@@ -1,0 +1,154 @@
+<div>
+  <div *ngIf="!isChangeEmail" class="flex flex-col gap-8">
+    <div class="flex justify-between items-center">
+      <p class="text-gray-700 font-light">change your email</p>
+      <button
+        mat-flat-button
+        class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-6 mat-elevation-z2 bg-blue-400 hover:bg-blue-500"
+        (click)="isChangeEmail = true"
+      >
+        <div class="h-6 w-full flex items-center justify-center">
+          <span>change email</span>
+        </div>
+      </button>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="flex justify-between items-center">
+      <p class="text-gray-700 font-light">change your password</p>
+      <button
+        mat-flat-button
+        class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-6 mat-elevation-z2 bg-red-400 hover:bg-red-500"
+        (click)="sendResetPasswordEmail()"
+      >
+        <div class="h-6 w-full flex items-center justify-center">
+          <span>change password</span>
+        </div>
+      </button>
+    </div>
+  </div>
+  <div *ngIf="isChangeEmail">
+    <form class="flex flex-col gap-5 max-w-xl mx-auto">
+      <mat-form-field>
+        <mat-label>New email</mat-label>
+        <input
+          type="email"
+          matInput
+          [formControl]="changeEmailFormControl"
+          [errorStateMatcher]="matcher"
+          placeholder="Ex. jhon_doe@email.com"
+          minlength="2"
+          maxlength="50"
+          name="email"
+          (change)="onChangeEmailChange()"
+        />
+        <mat-error
+          *ngIf="
+            !changeEmailFormControl.hasError('pattern') &&
+            !changeEmailFormControl.hasError('email') &&
+            !changeEmailFormControl.hasError('required') &&
+            !changeEmailFormControl.hasError('minlength') &&
+            !changeEmailFormControl.hasError('maxlength')
+          "
+          class="font-normal text-xs mt-1"
+        >
+          Email already exists
+        </mat-error>
+        <mat-error
+          *ngIf="changeEmailFormControl.hasError('pattern')"
+          class="font-normal text-xs mt-1"
+        >
+          Please enter a valid email address
+        </mat-error>
+        <mat-error
+          *ngIf="
+            changeEmailFormControl.hasError('minlength') ||
+            changeEmailFormControl.hasError('maxlength')
+          "
+          class="font-normal text-xs mt-1"
+        >
+          Email must be between <strong class="font-bold">2</strong> and
+          <strong class="font-bold">50</strong> characters
+        </mat-error>
+        <mat-error
+          *ngIf="changeEmailFormControl.hasError('required')"
+          class="font-normal text-xs mt-1"
+        >
+          Email is <strong class="font-bold">required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Confirm new email</mat-label>
+        <input
+          type="email"
+          matInput
+          [formControl]="confirmChangeEmailFormControl"
+          [errorStateMatcher]="matcher"
+          placeholder="Ex. jhon_doe@email.com"
+          minlength="2"
+          maxlength="50"
+          name="email"
+          (change)="onConfirmChangeEmailChange()"
+        />
+        <mat-error
+          *ngIf="
+            !changeEmailFormControl.hasError('pattern') &&
+            !changeEmailFormControl.hasError('email') &&
+            !changeEmailFormControl.hasError('required') &&
+            !changeEmailFormControl.hasError('minlength') &&
+            !changeEmailFormControl.hasError('maxlength')
+          "
+          class="font-normal text-xs mt-1"
+        >
+          Confirm email must be the same as email
+        </mat-error>
+        <mat-error
+          *ngIf="
+            confirmChangeEmailFormControl.hasError('minlength') ||
+            confirmChangeEmailFormControl.hasError('maxlength')
+          "
+          class="font-normal text-xs mt-1"
+        >
+          Confirm email must be between <strong class="font-bold">2</strong> and
+          <strong class="font-bold">50</strong> characters
+        </mat-error>
+        <mat-error
+          *ngIf="confirmChangeEmailFormControl.hasError('required')"
+          class="font-normal text-xs mt-1"
+        >
+          Confirm email is <strong class="font-bold">required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <div class="flex items-center justify-center gap-8">
+        <button
+          mat-flat-button
+          class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-6 mat-elevation-z2 {{
+            !loading ? 'bg-blue-400 hover:bg-blue-500' : 'bg-gray-200'
+          }}"
+          type="submit"
+          (click)="onSubmitChangeEmail()"
+          [disabled]="loading"
+        >
+          <div class="h-6 w-full flex items-center justify-center">
+            <span *ngIf="!loading">change email</span>
+            <mat-spinner
+              *ngIf="loading"
+              diameter="20"
+              mode="indeterminate"
+            ></mat-spinner>
+          </div>
+        </button>
+        <button
+          mat-flat-button
+          class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-6 mat-elevation-z2 bg-red-400 hover:bg-red-500"
+          (click)="isChangeEmail = false"
+        >
+          <div class="h-6 w-full flex items-center justify-center">
+            <span>cancel</span>
+          </div>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

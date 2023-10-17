@@ -63,10 +63,30 @@
   </div>
 
   <div class="mb-5">
-    <mat-list class="py-0 px-0 flex flex-row" (click)="signOut()">
+    <mat-list class="py-0 px-0 flex flex-row">
+      <a [routerLink]="['/profile']">
+        <mat-list-item
+          style="padding: 0; height: fit-content"
+          class="bg-violet-400 border-l-2 border-transparent hover:border-white hover:bg-blue-600 transition-all"
+        >
+          <div
+            class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+          >
+            <div class="w-8 h-8 flex flex-row items-center justify-center">
+              <mat-icon svgIcon="gear"></mat-icon>
+            </div>
+            <div class="transition {{ collapsed ? 'hidden' : 'block' }}">
+              <p class="m-0 font-light text-slate-200" style="margin: 0">
+                profile
+              </p>
+            </div>
+          </div>
+        </mat-list-item>
+      </a>
       <mat-list-item
         style="padding: 0; height: fit-content"
         class="bg-violet-400 border-l-2 border-transparent hover:border-white hover:bg-blue-600 transition-all"
+        (click)="signOut()"
       >
         <div
           class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
@@ -75,7 +95,9 @@
             <mat-icon svgIcon="sign-out"></mat-icon>
           </div>
           <div class="transition {{ collapsed ? 'hidden' : 'block' }}">
-            <p class="m-0 font-light text-slate-200" style="margin: 0">sign out</p>
+            <p class="m-0 font-light text-slate-200" style="margin: 0">
+              sign out
+            </p>
           </div>
         </div>
       </mat-list-item>

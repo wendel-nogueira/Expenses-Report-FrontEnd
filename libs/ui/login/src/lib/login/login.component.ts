@@ -1,6 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import {
   FormControl,
@@ -15,6 +15,8 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from 'libs/services/auth/auth.service';
 import { Router, RouterModule } from '@angular/router';
+import { UserService } from 'libs/services/user/user.service';
+import { TokenIdentity } from 'libs/models/TokenIdentity';
 
 @Component({
   selector: 'lib-login',
@@ -31,6 +33,7 @@ import { Router, RouterModule } from '@angular/router';
     ReactiveFormsModule,
     MatProgressSpinnerModule,
     RouterModule,
+    NgIf,
   ],
 })
 export class LoginComponent {
@@ -40,7 +43,11 @@ export class LoginComponent {
   isResetPassword = false;
   isMobile = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+    private router: Router
+  ) {}
 
   onResize() {
     this.isMobile = window.innerWidth <= 768;
@@ -79,9 +86,20 @@ export class LoginComponent {
 
         this.authService.createSession(response.token);
 
-        if (this.authService.getSession()) {
-          this.router.navigate(['/']);
-        }
+        const identity = this.authService.getIdentity() as TokenIdentity;
+
+        this.userService.getUserByIdentityId(identity.nameid).subscribe(
+          () => {
+            if (this.authService.getSession()) {
+              this.router.navigate(['/']);
+            }
+          },
+          () => {
+            if (this.authService.getSession()) {
+              this.router.navigate(['/update-user']);
+            }
+          }
+        );
       },
       () => {
         this.loadingLogin = false;
