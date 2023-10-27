@@ -17,6 +17,10 @@ export const masterPageRoutes: Route[] = [
         loadChildren: () => import('users').then((m) => m.usersRoutes),
       },
       {
+        path: 'departaments',
+        loadChildren: () => import('departaments').then((m) => m.departamentsRoutes),
+      },
+      {
         path: 'profile',
         loadChildren: () => import('profile').then((m) => m.profileRoutes),
       },

@@ -20,6 +20,7 @@
       ],
       "@handson/table": ["libs/ui/data-table/table/table.component.ts"],
       "change-password": ["libs/ui/change-password/src/index.ts"],
+      "departaments": ["libs/ui/departaments/src/index.ts"],
       "footer": ["libs/ui/master-page/src/lib/footer/src/index.ts"],
       "header": ["libs/ui/master-page/src/lib/header/src/index.ts"],
       "header-mobile": [
