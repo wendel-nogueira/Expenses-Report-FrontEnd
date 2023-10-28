@@ -1,4 +1,4 @@
-<div>
+<div class="flex items-center justify-center">
   <form class="w-full flex flex-col gap-5" *ngIf="!loading && user && identity">
     <div class="flex items-center gap-3">
       <mat-form-field class="w-full">
@@ -189,13 +189,12 @@
         (click)="onSubmit()"
       >
         <mat-icon svgIcon="edit" class="text-white"></mat-icon>
-        <span class="ml-2">update informations</span>
+        <span class="ml-2">update</span>
       </button>
     </div>
   </form>
   <div class="flex flex-col items-center justify-center" *ngIf="loading">
     <mat-spinner
-      *ngIf="loading"
       class="w-16 h-16 text-center mx-auto"
       [diameter]="60"
       [strokeWidth]="5"

@@ -117,8 +117,6 @@ export class AuthService {
       newEmail: email,
     };
 
-    console.log(`${this.apiURL}/email`);
-
     return this.httpClient
       .put<void>(`${this.apiURL}/email`, JSON.stringify(body))
       .pipe(retry(2), catchError(this.handleError));

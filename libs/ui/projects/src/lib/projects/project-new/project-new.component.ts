@@ -16,6 +16,8 @@ import { ProjectService } from '../../../../../../services/project/project.servi
 import { Project } from '../../../../../../models/Project';
 import { DepartamentService } from '../../../../../../services/departament/departament.service';
 import { Departament } from '../../../../../../models/Departament';
+import { AuthService } from '../../../../../../services/auth/auth.service';
+import { UserService } from '../../../../../../services/user/user.service';
 
 @Component({
   selector: 'lib-project-new',
@@ -36,9 +38,13 @@ import { Departament } from '../../../../../../models/Departament';
 export class ProjectNewComponent implements OnInit {
   departaments: Departament[] = [];
 
+  isAccountant = false;
+
   constructor(
     private projectService: ProjectService,
     private departamentService: DepartamentService,
+    private authService: AuthService,
+    private userService: UserService,
     private router: Router
   ) {}
 
@@ -65,13 +71,31 @@ export class ProjectNewComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    const role = this.authService.getIdentity()?.role;
+
+    this.isAccountant = role === 'Accountant';
+
     this.getDepartaments();
   }
 
   getDepartaments() {
-    this.departamentService.getDepartaments().subscribe((departaments) => {
-      this.departaments = departaments;
-    });
+    if (this.isAccountant) {
+      this.departamentService.getDepartaments().subscribe((departaments) => {
+        this.departaments = departaments;
+      });
+    } else {
+      const userIdentity = this.authService.getIdentity()?.nameid as string;
+
+      this.userService.getUserByIdentityId(userIdentity).subscribe((user) => {
+        if (!user) return;
+
+        this.departamentService
+          .getDepartamentsRelated(user.id as string)
+          .subscribe((departaments) => {
+            this.departaments = departaments;
+          });
+      });
+    }
   }
 
   onCodeChange() {

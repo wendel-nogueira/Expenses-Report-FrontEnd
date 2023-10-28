@@ -23,6 +23,7 @@ import { AddressService } from './../../../../../../services/address/address.ser
 import { Identity } from '../../../../../../models/Identity';
 import { User } from '../../../../../../models/User';
 import { Role } from '../../../../../../models/Role';
+import { AuthService } from './../../../../../../services/auth/auth.service';
 
 @Component({
   selector: 'lib-user-edit',
@@ -46,6 +47,7 @@ import { Role } from '../../../../../../models/Role';
 export class UserEditComponent implements OnInit {
   id: string | null = null;
   allUsers: User[] = [];
+  allManagers: User[] = [];
   user: User | null;
   identity: Identity | null;
   userSupervisors: string[] = [];
@@ -61,11 +63,15 @@ export class UserEditComponent implements OnInit {
   userHasBeenUpdated = false;
   roleHasBeenUpdated = false;
 
+  isAccountant = false;
+  showSuperviseButton = false;
+
   constructor(
     private route: ActivatedRoute,
     private identityService: IdentityService,
     private userService: UserService,
     private address: AddressService,
+    private authService: AuthService,
     private router: Router
   ) {
     this.user = null;
@@ -125,6 +131,12 @@ export class UserEditComponent implements OnInit {
       this.id = params.get('id');
     });
 
+    const role = this.authService.getIdentity()?.role;
+
+    this.isAccountant = role === 'Accountant';
+
+    if (!this.isAccountant) this.fields.forEach((field) => field.disable());
+
     this.emailFormControl.disable();
 
     this.getRoles();
@@ -175,8 +187,9 @@ export class UserEditComponent implements OnInit {
   getAllUsers() {
     this.userService.getUsers().subscribe((users) => {
       this.allUsers = users.filter((user) => user.id !== this.user?.id);
-      
+
       this.getUserSupervisors();
+      this.getAllManagers();
     });
   }
 
@@ -184,10 +197,44 @@ export class UserEditComponent implements OnInit {
     this.userService
       .getSupervisors(this.user?.id as string)
       .subscribe((supervisors) => {
-        this.userSupervisors = supervisors.map((supervisor) => supervisor.id as string);
+        this.userSupervisors = supervisors.map(
+          (supervisor) => supervisor.id as string
+        );
 
         this.supervisorsFormControl.setValue(this.userSupervisors);
+
+        if (!this.isAccountant) {
+          const userIdentity = this.authService.getIdentity()?.nameid as string;
+
+          this.userService
+            .getUserByIdentityId(userIdentity)
+            .subscribe((user) => {
+              const supervisor = this.userSupervisors.find(
+                (supervisor) => supervisor === user?.id
+              );
+
+              if (!supervisor) {
+                this.showSuperviseButton = true;
+              }
+            });
+        }
       });
+  }
+
+  getAllManagers() {
+    this.identityService.getIdentities().subscribe((identities) => {
+      const managers = identities.filter(
+        (identity) => identity.roleName === 'Manager'
+      );
+
+      this.allManagers = this.allUsers.filter((user) => {
+        const manager = managers.find(
+          (identity) => identity.id === user.identityId
+        );
+
+        return manager ? true : false;
+      });
+    });
   }
 
   getCountries() {
@@ -375,6 +422,26 @@ export class UserEditComponent implements OnInit {
           this.userSupervisors.splice(index, 1);
         });
     }
+  }
+
+  onAddSupervise() {
+    const userIdentity = this.authService.getIdentity()?.nameid as string;
+
+    this.userService.getUserByIdentityId(userIdentity).subscribe((user) => {
+      const addSupervisorId = user?.id as string;
+
+      this.userService
+        .addSupervisor(this.user?.id as string, addSupervisorId)
+        .subscribe(() => {
+          this.userSupervisors.push(addSupervisorId);
+
+          this.router
+            .navigateByUrl('/', { skipLocationChange: true })
+            .then(() => {
+              this.router.navigate([this.currentUrl]);
+            });
+        });
+    });
   }
 
   verifyUserHasBeenUpdated(): boolean {

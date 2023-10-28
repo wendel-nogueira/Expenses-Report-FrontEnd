@@ -58,7 +58,7 @@
           Email is <strong class="font-bold">required</strong>
         </mat-error>
       </mat-form-field>
-      <mat-form-field class="w-full">
+      <mat-form-field class="w-full" *ngIf="isAccountant">
         <mat-label>Role</mat-label>
         <mat-select
           [formControl]="rolesFormControl"

@@ -11,6 +11,7 @@ import {
 } from '../../../../../data-table/table/table.component';
 import { ProjectService } from './../../../../../../services/project/project.service';
 import { DepartamentService } from './../../../../../../services/departament/departament.service';
+import { AuthService } from '../../../../../../services/auth/auth.service';
 
 @Component({
   selector: 'lib-projects-list',
@@ -42,9 +43,12 @@ export class ProjectsListComponent implements OnInit {
 
   data: MatTableDataSource<rows>;
 
+  isAccountant = false;
+
   constructor(
     private projectService: ProjectService,
-    private departamentService: DepartamentService
+    private departamentService: DepartamentService,
+    private authService: AuthService
   ) {
     this.searchValue = '';
 
@@ -52,6 +56,12 @@ export class ProjectsListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const role = this.authService.getIdentity()?.role;
+
+    this.isAccountant = role === 'Accountant';
+
+    if (!this.isAccountant) this.columns.pop();
+
     this.getProjects();
   }
 
@@ -62,15 +72,15 @@ export class ProjectsListComponent implements OnInit {
       this.rows = [];
 
       this.departamentService.getDepartaments().subscribe((dataDepartament) => {
-        console.log(dataDepartament);
         data.forEach((element) => {
           this.rows.push({
             id: element.id,
             name: element.name,
             code: element.code,
-            departament: dataDepartament.find(
-              (departament) => departament.id === element.departamentId
-            )?.name || 'Not found',
+            departament:
+              dataDepartament.find(
+                (departament) => departament.id === element.departamentId
+              )?.name || 'Not found',
             active: element.isDeleted ? 'No' : 'Yes',
             actions: {
               href: `/projects/edit/${element.id}`,
@@ -112,7 +122,7 @@ interface rows {
   code: string;
   departament: string;
   active: string;
-  actions: {
+  actions?: {
     href: string;
     icon: string;
     style: string;

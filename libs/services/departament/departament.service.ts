@@ -19,6 +19,12 @@ export class DepartamentService {
       .pipe(retry(2), catchError(this.handleError));
   }
 
+  getDepartamentsRelated(user: string): Observable<Departament[]> {
+    return this.httpClient
+      .get<Departament[]>(`${this.apiURL}/allRelated/${user}`)
+      .pipe(retry(2), catchError(this.handleError));
+  }
+
   createDepartament(departament: Departament): Observable<Departament> {
     return this.httpClient
       .post<Departament>(this.apiURL, JSON.stringify(departament))
