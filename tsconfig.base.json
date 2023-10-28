@@ -20,6 +20,7 @@
       ],
       "@handson/table": ["libs/ui/data-table/table/table.component.ts"],
       "change-password": ["libs/ui/change-password/src/index.ts"],
+      "departaments": ["libs/ui/departaments/src/index.ts"],
       "footer": ["libs/ui/master-page/src/lib/footer/src/index.ts"],
       "header": ["libs/ui/master-page/src/lib/header/src/index.ts"],
       "header-mobile": [
@@ -31,6 +32,7 @@
       "login": ["libs/ui/login/src/index.ts"],
       "master-page": ["libs/ui/master-page/src/index.ts"],
       "profile": ["libs/ui/profile/src/index.ts"],
+      "projects": ["libs/ui/projects/src/index.ts"],
       "reset-password": ["libs/ui/reset-password/src/index.ts"],
       "update-user": ["libs/ui/update-user/src/index.ts"],
       "users": ["libs/ui/users/src/index.ts"]
