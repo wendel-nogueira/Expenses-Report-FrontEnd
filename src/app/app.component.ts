@@ -29,7 +29,7 @@ export class AppComponent {
     this.matIconRegistry.addSvgIcon(
       'buildings',
       this.domSanitizer.bypassSecurityTrustResourceUrl(
-        '../assets/buildings-bold.svg'
+        '../assets/buildings-regular.svg'
       )
     );
     this.matIconRegistry.addSvgIcon(

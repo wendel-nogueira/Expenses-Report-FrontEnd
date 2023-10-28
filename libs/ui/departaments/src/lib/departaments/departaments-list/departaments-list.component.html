@@ -1,0 +1,27 @@
+<div class="flex flex-col gap-4 mt-20">
+    <div class="w-full flex flex-row items-center justify-between gap-2 px-10">
+      <a [routerLink]="['/departaments/new']">
+        <button
+          mat-flat-button
+          class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 bg-green-400 hover:bg-green-500"
+        >
+          <mat-icon>add</mat-icon>
+          <span class="ml-2">new</span>
+        </button>
+      </a>
+      <div>
+        <app-input-search
+          (changeValue)="onChangeValue($event)"
+        ></app-input-search>
+      </div>
+    </div>
+    <div class="w-full px-5">
+      <app-table
+        [loading]="loading"
+        [tableColumns]="columns"
+        [dataSource]="data"
+        [ariaLabel]="'Select page of departaments'"
+        class="w-full"
+      ></app-table>
+    </div>
+  </div>

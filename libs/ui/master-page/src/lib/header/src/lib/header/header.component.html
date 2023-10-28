@@ -59,6 +59,25 @@
           </div>
         </mat-list-item>
       </a>
+      <a [routerLink]="['/departaments']">
+        <mat-list-item
+          style="padding: 0; height: fit-content"
+          class="bg-violet-400 border-l-2 border-transparent hover:border-white hover:bg-blue-600 transition-all"
+        >
+          <div
+            class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+          >
+            <div class="w-8 h-8 flex flex-row items-center justify-center">
+              <mat-icon svgIcon="buildings"></mat-icon>
+            </div>
+            <div class="transition {{ collapsed ? 'hidden' : 'block' }}">
+              <p class="m-0 font-light text-slate-200" style="margin: 0">
+                departaments
+              </p>
+            </div>
+          </div>
+        </mat-list-item>
+      </a>
     </mat-list>
   </div>
 
