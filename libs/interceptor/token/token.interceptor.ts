@@ -17,14 +17,12 @@ export class TokenInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    const url = this.router.url;
+    if (request.headers.get('remove-bearer')) {
+      const formatedRequest = request.clone({
+        headers: request.headers.delete('remove-bearer'),
+      });
 
-    if (
-      url === '/login' ||
-      url.includes('/change-password') ||
-      url === '/update-user'
-    ) {
-      return next.handle(request);
+      return next.handle(formatedRequest);
     }
 
     const token = this.authService.getSession();

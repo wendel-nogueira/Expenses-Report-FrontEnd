@@ -13,6 +13,7 @@ import { InputSearchComponent } from '../../../../../forms/input-search/input-se
 import { Identity } from '../../../../../../models/Identity';
 import { IdentityService } from '../../../../../../services/identity/identity.service';
 import { UserService } from '../../../../../../services/user/user.service';
+import { AuthService } from '../../../../../../services/auth/auth.service';
 
 @Component({
   selector: 'lib-users-list',
@@ -47,9 +48,13 @@ export class UsersListComponent implements OnInit {
 
   data: MatTableDataSource<rows>;
 
+  isAccountant = false;
+  isManager = false;
+
   constructor(
     private identityService: IdentityService,
-    private userService: UserService
+    private userService: UserService,
+    private authService: AuthService
   ) {
     this.searchValue = '';
 
@@ -57,16 +62,27 @@ export class UsersListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const role = this.authService.getIdentity()?.role;
+
+    this.isAccountant = role === 'Accountant';
+    this.isManager = role === 'Manager';
+
+    if (!this.isAccountant && !this.isManager) this.columns.pop();
+
     this.getIdentities();
   }
 
   getIdentities() {
+    const userIdentity = this.authService.getIdentity()?.nameid;
+
     this.identityService.getIdentities().subscribe((identities: Identity[]) => {
       this.rows = [];
       this.rowsFiltered = [];
 
-      identities.forEach((identity) => {
-        this.userService.getUsers().subscribe((users) => {
+      this.userService.getUsers().subscribe((users) => {
+        identities.forEach((identity) => {
+          if (identity.id === userIdentity) return;
+
           users.forEach((user) => {
             if (user.identityId === identity.id) {
               const data: rows = {
@@ -87,10 +103,10 @@ export class UsersListComponent implements OnInit {
               this.rowsFiltered.push(data);
             }
           });
-
-          this.data.data = this.rows;
-          this.loadingUsers = false;
         });
+
+        this.data = new MatTableDataSource<rows>(this.rows);
+        this.loadingUsers = false;
       });
 
       this.loadingIdentities = false;

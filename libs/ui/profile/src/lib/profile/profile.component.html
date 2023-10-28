@@ -17,7 +17,14 @@
             <div
               class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
             >
-              <p class="m-0 font-light text-gray-700" style="margin: 0">
+              <p
+                class="m-0 {{
+                  selected === 'informations'
+                    ? 'font-medium text-blue-500'
+                    : 'font-light text-gray-700'
+                }}"
+                style="margin: 0"
+              >
                 information
               </p>
             </div>
@@ -30,7 +37,14 @@
             <div
               class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
             >
-              <p class="m-0 font-light text-gray-700" style="margin: 0">
+              <p
+                class="m-0 {{
+                  selected === 'security'
+                    ? 'font-medium text-blue-500'
+                    : 'font-light text-gray-700'
+                }}"
+                style="margin: 0"
+              >
                 security
               </p>
             </div>
@@ -38,7 +52,9 @@
         </mat-list>
       </mat-sidenav>
       <mat-sidenav-content
-        class="flex flex-col justify-between py-4 px-4 w-auto"
+        class="flex flex-col py-4 px-4 w-auto h-full {{
+          selected === 'informations' ? 'justify-center' : 'justify-between'
+        }}"
         style="display: flex; background: white"
       >
         <lib-informations

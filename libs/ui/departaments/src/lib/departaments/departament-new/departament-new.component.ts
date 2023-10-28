@@ -57,7 +57,6 @@ export class DepartamentNewComponent {
     const acronym = this.acronymFormControl.value as string;
 
     this.departamentService.checkAcronymExists(acronym).subscribe((exists) => {
-      console.log(exists);
       if (exists) {
         this.acronymFormControl.setErrors({ invalid: true });
       }

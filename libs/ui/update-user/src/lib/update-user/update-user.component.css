@@ -2,6 +2,12 @@
   background: #f2f2f2;
 }
 
+div div:last-child {
+  max-width: 600px;
+  min-width: 300px;
+  width: 100%;
+}
+
 #next {
   background: rgb(74 222 128);
   color: white;
