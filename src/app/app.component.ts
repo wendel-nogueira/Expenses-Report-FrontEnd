@@ -35,7 +35,7 @@ export class AppComponent {
     this.matIconRegistry.addSvgIcon(
       'folder',
       this.domSanitizer.bypassSecurityTrustResourceUrl(
-        '../assets/folder-bold.svg'
+        '../assets/folder-regular.svg'
       )
     );
     this.matIconRegistry.addSvgIcon(
