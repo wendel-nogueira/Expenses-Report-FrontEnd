@@ -263,7 +263,7 @@
         </mat-form-field>
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3" *ngIf="isAccountant">
         <mat-form-field class="w-full">
           <mat-label>Supervisors</mat-label>
           <mat-select
@@ -272,8 +272,8 @@
             (selectionChange)="onChangeSupervisors()"
             [(value)]="userSupervisorsToUpdate"
           >
-            <mat-option *ngFor="let user of allUsers" [value]="user.id">{{
-              user.name.firstName + ' ' + user.name.lastName
+            <mat-option *ngFor="let manager of allManagers" [value]="manager.id">{{
+              manager.name.firstName + ' ' + manager.name.lastName
             }}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -285,9 +285,19 @@
           class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 bg-blue-400 hover:bg-blue-500 mat-elevation-z2"
           type="submit"
           (click)="onSubmit()"
+          *ngIf="user && identity && isAccountant"
         >
           <mat-icon svgIcon="edit" class="text-white"></mat-icon>
           <span class="ml-2">update</span>
+        </button>
+        <button
+          mat-flat-button
+          class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 bg-green-400 hover:bg-green-500 mat-elevation-z2"
+          (click)="onAddSupervise()"
+          *ngIf="user && identity && !isAccountant && showSuperviseButton"
+        >
+          <mat-icon svgIcon="add" class="text-white"></mat-icon>
+          <span class="ml-2">supervise</span>
         </button>
         <a [routerLink]="['/users']">
           <button
@@ -302,7 +312,7 @@
           mat-flat-button
           class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 bg-orange-400 hover:bg-orange-500 mat-elevation-z2"
           (click)="onDeactivate()"
-          *ngIf="user && identity && !identity.isDeleted"
+          *ngIf="user && identity && !identity.isDeleted && isAccountant"
         >
           <mat-icon svgIcon="trash" class="text-white"></mat-icon>
           <span class="ml-2">deactivate</span>
@@ -311,7 +321,7 @@
           mat-flat-button
           class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 bg-green-400 hover:bg-green-500 mat-elevation-z2"
           (click)="onActivate()"
-          *ngIf="user && identity && identity.isDeleted"
+          *ngIf="user && identity && identity.isDeleted && isAccountant"
         >
           <mat-icon svgIcon="check" class="text-white"></mat-icon>
           <span class="ml-2">activate</span>

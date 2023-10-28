@@ -17,6 +17,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { IdentityService } from '../../../../../../services/identity/identity.service';
 import { Role } from '../../../../../../models/Role';
 import { Identity } from '../../../../../../models/Identity';
+import { AuthService } from '../../../../../../services/auth/auth.service';
+
 
 @Component({
   selector: 'lib-user-new',
@@ -38,19 +40,33 @@ import { Identity } from '../../../../../../models/Identity';
 })
 export class UserNewComponent implements OnInit {
   roles: Role[] = [];
+  isAccountant = false;
 
   constructor(
     private identityService: IdentityService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    const role = this.authService.getIdentity()?.role;
+
+    this.isAccountant = role === 'Accountant';
+
     this.getRoles();
   }
 
   getRoles() {
     this.identityService.getRoles().subscribe((roles) => {
       this.roles = roles;
+
+      if (!this.isAccountant) {
+        const fieldStaffEnum = this.roles.find(
+          (role) => role.name === 'FieldStaff'
+        )?.enumId.toString() as string;
+
+        this.rolesFormControl.setValue(fieldStaffEnum);
+      }
     });
   }
 

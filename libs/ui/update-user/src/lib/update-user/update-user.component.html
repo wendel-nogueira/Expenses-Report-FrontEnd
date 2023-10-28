@@ -2,7 +2,7 @@
   <div class="py-4 px-6 bg-white shadow-md rounded-lg w-3/5">
     <mat-stepper [linear]="true" #stepper>
         <mat-step [stepControl]="nameFormGroup" label="Name">
-          <form [formGroup]="nameFormGroup">
+          <form [formGroup]="nameFormGroup" class="mt-5">
             <mat-form-field class="w-full">
               <mat-label>First Name</mat-label>
               <input
@@ -78,7 +78,7 @@
           </form>
         </mat-step>
         <mat-step [stepControl]="addressFormGroup" label="Address">
-          <form [formGroup]="addressFormGroup">
+          <form [formGroup]="addressFormGroup" class="mt-5">
             <div class="flex items-center gap-3">
               <mat-form-field class="w-full">
                 <mat-label>Zip</mat-label>

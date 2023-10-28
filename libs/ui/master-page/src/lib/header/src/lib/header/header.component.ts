@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -20,15 +20,39 @@ import { AuthService } from 'libs/services/auth/auth.service';
     RouterModule,
   ],
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   collapsed = true;
+
+  showUserMenu = false;
+  showDepartamentMenu = false;
+  showProjectMenu = false;
+
+  isAccountant = false;
+  isManager = false;
+  isFieldStaff = false;
 
   constructor(
     private authService: AuthService,
   ) {}
 
+  ngOnInit(): void {
+    const role = this.authService.getIdentity()?.role;
+
+    this.isAccountant = role === 'Accountant';
+    this.isManager = role === 'Manager';
+    this.isFieldStaff = role === 'FieldStaff';
+  }
+
   toggleCollapsed(): void {
     this.collapsed = !this.collapsed;
+  }
+
+  toggleMenu(menu: string): void {
+    this.collapsed = false;
+
+    this.showUserMenu = menu === 'user' ? !this.showUserMenu : false;
+    this.showDepartamentMenu = menu === 'departament' ? !this.showDepartamentMenu : false;
+    this.showProjectMenu = menu === 'project' ? !this.showProjectMenu : false;
   }
 
   signOut(): void {

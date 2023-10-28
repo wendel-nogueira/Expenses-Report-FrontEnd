@@ -24,7 +24,7 @@
       <a [routerLink]="['/']">
         <mat-list-item
           style="padding: 0; height: fit-content"
-          class="bg-violet-400 border-l-2 border-transparent hover:border-white hover:bg-blue-600 transition-all"
+          class="border-l-2 border-transparent hover:border-white hover:bg-blue-600 transition-all"
         >
           <div
             class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
@@ -40,63 +40,134 @@
           </div>
         </mat-list-item>
       </a>
-      <a [routerLink]="['/users']">
-        <mat-list-item
-          style="padding: 0; height: fit-content"
-          class="bg-violet-400 border-l-2 border-transparent hover:border-white hover:bg-blue-600 transition-all"
+
+      <mat-list-item
+        style="padding: 0; height: fit-content"
+        class="transition-all {{ showUserMenu ? 'menu-open' : '' }}"
+        (click)="toggleMenu('user')"
+        *ngIf="isAccountant || isManager"
+      >
+        <div
+          class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+        >
+          <div class="w-8 h-8 flex flex-row items-center justify-center">
+            <mat-icon svgIcon="users"></mat-icon>
+          </div>
+          <div class="transition {{ collapsed ? 'hidden' : 'block' }}">
+            <p class="m-0 font-light text-slate-200" style="margin: 0">users</p>
+          </div>
+        </div>
+        <div
+          class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+          *ngIf="showUserMenu"
         >
           <div
-            class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+            class="transition flex flex-col gap-2 w-full
+          {{ collapsed ? 'hidden' : 'block' }}"
           >
-            <div class="w-8 h-8 flex flex-row items-center justify-center">
-              <mat-icon svgIcon="users"></mat-icon>
-            </div>
-            <div class="transition {{ collapsed ? 'hidden' : 'block' }}">
+            <a
+              [routerLink]="['/users/new']"
+              class="pl-4 border-l-2 border-transparent hover:border-white transition-all"
+              *ngIf="isAccountant || isManager"
+            >
+              <p class="m-0 font-light text-slate-200" style="margin: 0">new</p>
+            </a>
+            <a
+              [routerLink]="['/users']"
+              class="pl-4 border-l-2 border-transparent hover:border-white transition-all"
+            >
               <p class="m-0 font-light text-slate-200" style="margin: 0">
-                users
+                list
               </p>
-            </div>
+            </a>
           </div>
-        </mat-list-item>
-      </a>
-      <a [routerLink]="['/departaments']">
-        <mat-list-item
-          style="padding: 0; height: fit-content"
-          class="bg-violet-400 border-l-2 border-transparent hover:border-white hover:bg-blue-600 transition-all"
+        </div>
+      </mat-list-item>
+      <mat-list-item
+        style="padding: 0; height: fit-content"
+        class="transition-all {{ showDepartamentMenu ? 'menu-open' : '' }}"
+        (click)="toggleMenu('departament')"
+        *ngIf="isAccountant"
+      >
+        <div
+          class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+        >
+          <div class="w-8 h-8 flex flex-row items-center justify-center">
+            <mat-icon svgIcon="buildings"></mat-icon>
+          </div>
+          <div class="transition {{ collapsed ? 'hidden' : 'block' }}">
+            <p class="m-0 font-light text-slate-200" style="margin: 0">
+              departaments
+            </p>
+          </div>
+        </div>
+        <div
+          class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+          *ngIf="showDepartamentMenu"
         >
           <div
-            class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+            class="transition flex flex-col gap-2 w-full
+            {{ collapsed ? 'hidden' : 'block' }}"
           >
-            <div class="w-8 h-8 flex flex-row items-center justify-center">
-              <mat-icon svgIcon="buildings"></mat-icon>
-            </div>
-            <div class="transition {{ collapsed ? 'hidden' : 'block' }}">
+            <a
+              [routerLink]="['/departaments/new']"
+              class="pl-4 border-l-2 border-transparent hover:border-white transition-all"
+            >
+              <p class="m-0 font-light text-slate-200" style="margin: 0">new</p>
+            </a>
+            <a
+              [routerLink]="['/departaments']"
+              class="pl-4 border-l-2 border-transparent hover:border-white transition-all"
+            >
               <p class="m-0 font-light text-slate-200" style="margin: 0">
-                departaments
+                list
               </p>
-            </div>
+            </a>
           </div>
-        </mat-list-item>
-      </a>
-      <a [routerLink]="['/projects']">
-        <mat-list-item
-          style="padding: 0; height: fit-content"
-          class="bg-violet-400 border-l-2 border-transparent hover:border-white hover:bg-blue-600 transition-all"
+        </div>
+      </mat-list-item>
+      <mat-list-item
+        style="padding: 0; height: fit-content"
+        class="transition-all {{ showProjectMenu ? 'menu-open' : '' }}"
+        (click)="toggleMenu('project')"
+      >
+        <div
+          class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+        >
+          <div class="w-8 h-8 flex flex-row items-center justify-center">
+            <mat-icon svgIcon="folder"></mat-icon>
+          </div>
+          <div class="transition {{ collapsed ? 'hidden' : 'block' }}">
+            <p class="m-0 font-light text-slate-200" style="margin: 0">
+              projects
+            </p>
+          </div>
+        </div>
+        <div
+          class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+          *ngIf="showProjectMenu"
         >
           <div
-            class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
+            class="transition flex flex-col gap-2 w-full
+            {{ collapsed ? 'hidden' : 'block' }}"
           >
-            <div class="w-8 h-8 flex flex-row items-center justify-center">
-              <mat-icon svgIcon="folder"></mat-icon>
-            </div>
-            <div class="transition {{ collapsed ? 'hidden' : 'block' }}">
+            <a
+              [routerLink]="['/projects/new']"
+              class="pl-4 border-l-2 border-transparent hover:border-white transition-all"
+            >
+              <p class="m-0 font-light text-slate-200" style="margin: 0">new</p>
+            </a>
+            <a
+              [routerLink]="['/projects']"
+              class="pl-4 border-l-2 border-transparent hover:border-white transition-all"
+            >
               <p class="m-0 font-light text-slate-200" style="margin: 0">
-                projects
+                list
               </p>
-            </div>
+            </a>
           </div>
-        </mat-list-item>
-      </a>
+        </div>
+      </mat-list-item>
     </mat-list>
   </div>
 
@@ -105,7 +176,7 @@
       <a [routerLink]="['/profile']">
         <mat-list-item
           style="padding: 0; height: fit-content"
-          class="bg-violet-400 border-l-2 border-transparent hover:border-white hover:bg-blue-600 transition-all"
+          class="border-l-2 border-transparent hover:border-white hover:bg-blue-600 transition-all"
         >
           <div
             class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full menu-item"
@@ -123,7 +194,7 @@
       </a>
       <mat-list-item
         style="padding: 0; height: fit-content"
-        class="bg-violet-400 border-l-2 border-transparent hover:border-white hover:bg-blue-600 transition-all"
+        class="border-l-2 border-transparent hover:border-white hover:bg-blue-600 transition-all"
         (click)="signOut()"
       >
         <div

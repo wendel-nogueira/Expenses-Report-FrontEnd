@@ -1,4 +1,6 @@
 import { Route } from '@angular/router';
+import { AccountantGuard } from '../../../../guard/accountant/accountant.guard';
+
 
 export const projectsRoutes: Route[] = [
   {
@@ -14,6 +16,7 @@ export const projectsRoutes: Route[] = [
         (m) => m.ProjectEditComponent
       ),
     pathMatch: 'full',
+    canActivate: [AccountantGuard],
   },
   {
     path: 'new',

@@ -13,7 +13,11 @@ export class AddressService {
 
   getCountries() {
     return this.httpClient
-      .get<ApiResponse>('https://countriesnow.space/api/v0.1/countries/iso')
+      .get<ApiResponse>('https://countriesnow.space/api/v0.1/countries/iso', {
+        headers: {
+          'remove-bearer': 'true',
+        },
+      })
       .pipe(retry(2), catchError(this.handleError));
   }
 
@@ -23,6 +27,11 @@ export class AddressService {
         'https://countriesnow.space/api/v0.1/countries/states',
         {
           country: countryName,
+        },
+        {
+          headers: {
+            'remove-bearer': 'true',
+          },
         }
       )
       .pipe(retry(2), catchError(this.handleError));
@@ -35,6 +44,11 @@ export class AddressService {
         {
           country: countryName,
           state: stateName,
+        },
+        {
+          headers: {
+            'remove-bearer': 'true',
+          },
         }
       )
       .pipe(retry(2), catchError(this.handleError));
@@ -43,7 +57,12 @@ export class AddressService {
   getInfoByZipCode(zipCode: string) {
     return this.httpClient
       .get<ZipResponse>(
-        `https://app.zipcodebase.com/api/v1/search?apikey=${this.token}&codes=${zipCode}`
+        `https://app.zipcodebase.com/api/v1/search?apikey=${this.token}&codes=${zipCode}`,
+        {
+          headers: {
+            'remove-bearer': 'true',
+          },
+        }
       )
       .pipe(retry(2), catchError(this.handleError));
   }
