@@ -4,14 +4,6 @@ mat-sidenav-container {
 
 mat-sidenav {
   border: none;
-  background: linear-gradient(
-    135deg,
-    rgb(59 130 246) 0%,
-    rgb(16, 73, 196) 80%
-  );
+  background: linear-gradient(135deg, rgb(59 130 246) 0%, rgb(16, 73, 196) 80%);
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-}
-
-mat-sidenav-content {
-  display: flex;
 }

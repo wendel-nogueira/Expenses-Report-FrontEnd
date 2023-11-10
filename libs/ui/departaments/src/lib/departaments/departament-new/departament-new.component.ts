@@ -1,18 +1,19 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import {
-  FormControl,
-  Validators,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { DepartamentService } from '../../../../../../services/departament/departament.service';
-import { Departament } from '../../../../../../models/Departament';
+import { RedirectButtonComponent } from 'libs/ui/buttons/redirect-button/redirect-button.component';
+import { FlatButtonComponent } from 'libs/ui/buttons/flat-button/flat-button.component';
+import { FormGroupComponent } from 'libs/ui/forms/form-group/form-group.component';
+import { HeaderComponent } from 'libs/ui/page/header/header.component';
+import { ContentComponent } from 'libs/ui/page/content/content.component';
+import { InputTextComponent } from 'libs/ui/forms/input-text/input-text.component';
+import { TextFieldComponent } from 'libs/ui/forms/text-field/text-field.component';
+import { ButtonGroupComponent } from 'libs/ui/buttons/button-group/button-group.component';
+import { Departament } from 'libs/models/Departament';
+import { FormComponent } from 'libs/ui/forms/form/form.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'lib-departament-new',
@@ -22,66 +23,72 @@ import { Departament } from '../../../../../../models/Departament';
   imports: [
     CommonModule,
     RouterModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatIconModule,
+    HeaderComponent,
+    ContentComponent,
+    InputTextComponent,
+    FormGroupComponent,
+    FlatButtonComponent,
+    RedirectButtonComponent,
+    ButtonGroupComponent,
+    TextFieldComponent,
+    FormComponent,
+    MatSnackBarModule,
   ],
 })
 export class DepartamentNewComponent {
+  name = '';
+  nameIsInvalid = true;
+  acronym = '';
+  acronymExists = false;
+  acronymIsInvalid = true;
+  description = '';
+
   constructor(
     private departamentService: DepartamentService,
-    private router: Router
+    private router: Router,
+    private matSnackBar: MatSnackBar
   ) {}
 
-  nameFormControl = new FormControl('', [
-    Validators.required,
-    Validators.minLength(2),
-    Validators.maxLength(50),
-  ]);
-  acronymFormControl = new FormControl('', [
-    Validators.required,
-    Validators.minLength(2),
-    Validators.maxLength(10),
-  ]);
-  descriptionFormControl = new FormControl('', []);
+  acronymChangeValue(acronym: string) {
+    if (!acronym || this.acronymIsInvalid) return;
 
-  matcher = new ErrorStateMatcher();
-
-  fields = [this.nameFormControl, this.acronymFormControl, this.descriptionFormControl];
-
-  onAcronymChange() {
-    if (this.acronymFormControl.invalid) return;
-
-    const acronym = this.acronymFormControl.value as string;
+    this.acronym = acronym;
 
     this.departamentService.checkAcronymExists(acronym).subscribe((exists) => {
       if (exists) {
-        this.acronymFormControl.setErrors({ invalid: true });
+        this.acronymExists = true;
       }
     });
   }
 
   onSubmit() {
-    if (this.fields.some((field) => field.invalid)) return;
+    if (this.nameIsInvalid || this.acronymIsInvalid || this.acronymExists) {
+      this.matSnackBar.open('Invalid fields! Check that the fields have been filled in correctly.', '', {
+        duration: 4000,
+        panelClass: ['red-snackbar'],
+      });
 
-    const name = this.nameFormControl.value;
-    const acronym = this.acronymFormControl.value;
-    const description = this.descriptionFormControl.value;
-
-    if (!name || !acronym) return;
+      return;
+    }
 
     const newDepartament: Departament = {
-      name,
-      acronym,
-      description: description || '',
+      name: this.name,
+      acronym: this.acronym,
+      description: this.description,
     };
 
-    this.departamentService
-      .createDepartament(newDepartament)
-      .subscribe(() => {
-        this.router.navigate(['/departaments']);
+    this.departamentService.createDepartament(newDepartament).subscribe(() => {
+      this.matSnackBar.open('Departament created successfully!', '', {
+        duration: 4000,
+        panelClass: ['green-snackbar'],
       });
+
+      this.router.navigate(['/departaments']);
+    }, () => {
+      this.matSnackBar.open('Error creating departament!', '', {
+        duration: 4000,
+        panelClass: ['red-snackbar'],
+      });
+    });
   }
 }

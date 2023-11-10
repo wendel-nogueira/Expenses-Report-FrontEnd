@@ -1,29 +1,34 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @nx/enforce-module-boundaries */
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, ParamMap, RouterModule } from '@angular/router';
-import { MatInputModule } from '@angular/material/input';
-import {
-  FormsModule,
-  ReactiveFormsModule,
-  FormControl,
-  Validators,
-} from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { Country } from 'libs/models/Country';
-import { State } from 'libs/models/State';
 import { Router } from '@angular/router';
 import { UserService } from '../../../../../../services/user/user.service';
 import { IdentityService } from '../../../../../../services/identity/identity.service';
-import { AddressService } from './../../../../../../services/address/address.service';
 import { Identity } from '../../../../../../models/Identity';
-import { User } from '../../../../../../models/User';
+import { Name, Address, User } from '../../../../../../models/User';
 import { Role } from '../../../../../../models/Role';
 import { AuthService } from './../../../../../../services/auth/auth.service';
+import { ContentComponent } from 'libs/ui/page/content/content.component';
+import { HeaderComponent } from 'libs/ui/page/header/header.component';
+import { InputEmailComponent } from 'libs/ui/forms/input-email/input-email.component';
+import { InputTextComponent } from 'libs/ui/forms/input-text/input-text.component';
+import {
+  SelectComponent,
+  SelectOption as SelectOption,
+} from 'libs/ui/forms/select/select.component';
+import {
+  SelectMultipleComponent,
+  SelectMultipleOption,
+} from 'libs/ui/forms/select-multiple/select-multiple.component';
+import { FlatButtonComponent } from 'libs/ui/buttons/flat-button/flat-button.component';
+import { RedirectButtonComponent } from 'libs/ui/buttons/redirect-button/redirect-button.component';
+import { FormGroupComponent } from 'libs/ui/forms/form-group/form-group.component';
+import { ButtonGroupComponent } from 'libs/ui/buttons/button-group/button-group.component';
+import { AddressGroupComponent } from 'libs/ui/forms/address-group/address-group.component';
+import { FormComponent } from 'libs/ui/forms/form/form.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'lib-user-edit',
@@ -32,33 +37,60 @@ import { AuthService } from './../../../../../../services/auth/auth.service';
   styleUrls: ['./user-edit.component.css'],
   imports: [
     CommonModule,
-    MatInputModule,
-    MatFormFieldModule,
-    FormsModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    NgIf,
-    MatSelectModule,
-    MatIconModule,
     RouterModule,
-    MatProgressSpinnerModule,
+    HeaderComponent,
+    ContentComponent,
+    InputEmailComponent,
+    SelectComponent,
+    SelectMultipleComponent,
+    InputTextComponent,
+    FlatButtonComponent,
+    RedirectButtonComponent,
+    FormGroupComponent,
+    ButtonGroupComponent,
+    AddressGroupComponent,
+    FormComponent,
+    MatSnackBarModule,
   ],
 })
 export class UserEditComponent implements OnInit {
   id: string | null = null;
-  allUsers: User[] = [];
-  allManagers: User[] = [];
+
   user: User | null;
   identity: Identity | null;
   userSupervisors: string[] = [];
-  userSupervisorsToUpdate: string[] = [];
-  emailExists = false;
-  roles: Role[] = [];
-  countries: Country[] = [];
-  states: State[] = [];
-  cities: string[] = [];
+
+  allUsers: User[] = [];
+  allManagers: User[] = [];
+  managers: SelectMultipleOption[] = [];
   loading = true;
   currentUrl = this.router.url;
+
+  allRoles: Role[] = [];
+  roles: SelectOption[] = [];
+
+  firstNameIsInvalid = false;
+  lastNameIsInvalid = false;
+  roleIsInvalid = false;
+  zipIsInvalid = false;
+  countryIsInvalid = false;
+  stateIsInvalid = false;
+  cityIsInvalid = false;
+  addressIsInvalid = false;
+
+  name: Name = {
+    firstName: '',
+    lastName: '',
+  };
+  email = '';
+  role = '';
+  address: Address = {
+    zip: '',
+    country: '',
+    state: '',
+    city: '',
+    address: '',
+  };
 
   userHasBeenUpdated = false;
   roleHasBeenUpdated = false;
@@ -70,61 +102,13 @@ export class UserEditComponent implements OnInit {
     private route: ActivatedRoute,
     private identityService: IdentityService,
     private userService: UserService,
-    private address: AddressService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private matSnackBar: MatSnackBar
   ) {
     this.user = null;
     this.identity = null;
   }
-
-  matcher = new ErrorStateMatcher();
-
-  firstNameFormControl = new FormControl('', [
-    Validators.required,
-    Validators.minLength(2),
-    Validators.maxLength(50),
-  ]);
-  lastNameFormControl = new FormControl('', [
-    Validators.required,
-    Validators.minLength(2),
-    Validators.maxLength(50),
-  ]);
-  emailFormControl = new FormControl('', [
-    Validators.required,
-    Validators.email,
-    Validators.minLength(2),
-    Validators.maxLength(50),
-    Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$'),
-  ]);
-  roleFormControl = new FormControl('', [Validators.required]);
-  zipFormControl = new FormControl('', [
-    Validators.required,
-    Validators.minLength(2),
-    Validators.maxLength(10),
-  ]);
-  countryFormControl = new FormControl('', [Validators.required]);
-  stateFormControl = new FormControl('', [Validators.required]);
-  cityFormControl = new FormControl('', [Validators.required]);
-  addressFormControl = new FormControl('', [
-    Validators.required,
-    Validators.minLength(2),
-    Validators.maxLength(50),
-  ]);
-
-  supervisorsFormControl = new FormControl<string[] | null>([]);
-
-  fields = [
-    this.firstNameFormControl,
-    this.lastNameFormControl,
-    this.emailFormControl,
-    this.roleFormControl,
-    this.zipFormControl,
-    this.countryFormControl,
-    this.stateFormControl,
-    this.cityFormControl,
-    this.addressFormControl,
-  ];
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params: ParamMap) => {
@@ -135,18 +119,23 @@ export class UserEditComponent implements OnInit {
 
     this.isAccountant = role === 'Accountant';
 
-    if (!this.isAccountant) this.fields.forEach((field) => field.disable());
-
-    this.emailFormControl.disable();
-
     this.getRoles();
     this.getUser();
-    this.getCountries();
   }
 
   getRoles() {
     this.identityService.getRoles().subscribe((roles) => {
-      this.roles = roles;
+      const options: SelectOption[] = [];
+
+      roles.forEach((role) => {
+        options.push({
+          value: role.enumId.toString(),
+          viewValue: role.name,
+        });
+      });
+
+      this.roles = options;
+      this.allRoles = roles;
     });
   }
 
@@ -161,23 +150,21 @@ export class UserEditComponent implements OnInit {
         this.user = user;
         this.identity = identity;
 
-        this.firstNameFormControl.setValue(this.user?.name.firstName);
-        this.lastNameFormControl.setValue(this.user?.name.lastName);
-        this.emailFormControl.setValue(this.identity?.email);
-        this.roleFormControl.setValue(
-          this.roles.find((role) => role.name === this.identity?.roleName)
-            ?.id || null
-        );
-
-        this.zipFormControl.setValue(this.user?.address.zip);
-        this.countryFormControl.setValue(this.user?.address.country);
-        this.onChangeCountry(this.user?.address.country);
-
-        this.stateFormControl.setValue(this.user?.address.state);
-        this.onChangeState(this.user?.address.state);
-
-        this.cityFormControl.setValue(this.user?.address.city);
-        this.addressFormControl.setValue(this.user?.address.address);
+        this.name = {
+          firstName: this.user?.name.firstName,
+          lastName: this.user?.name.lastName,
+        };
+        this.email = this.identity?.email as string;
+        this.role = this.roles.find(
+          (role) => role.viewValue === this.identity?.roleName
+        )?.value as string;
+        this.address = {
+          zip: this.user?.address.zip,
+          country: this.user?.address.country,
+          state: this.user?.address.state,
+          city: this.user?.address.city,
+          address: this.user?.address.address,
+        };
 
         this.getAllUsers();
       });
@@ -185,12 +172,20 @@ export class UserEditComponent implements OnInit {
   }
 
   getAllUsers() {
-    this.userService.getUsers().subscribe((users) => {
-      this.allUsers = users.filter((user) => user.id !== this.user?.id);
+    this.userService.getUsers().subscribe(
+      (users) => {
+        this.allUsers = users.filter((user) => user.id !== this.user?.id);
 
-      this.getUserSupervisors();
-      this.getAllManagers();
-    });
+        this.getUserSupervisors();
+        this.getAllManagers();
+      },
+      () => {
+        this.loading = false;
+      },
+      () => {
+        this.loading = false;
+      }
+    );
   }
 
   getUserSupervisors() {
@@ -200,8 +195,6 @@ export class UserEditComponent implements OnInit {
         this.userSupervisors = supervisors.map(
           (supervisor) => supervisor.id as string
         );
-
-        this.supervisorsFormControl.setValue(this.userSupervisors);
 
         if (!this.isAccountant) {
           const userIdentity = this.authService.getIdentity()?.nameid as string;
@@ -227,149 +220,128 @@ export class UserEditComponent implements OnInit {
         (identity) => identity.roleName === 'Manager'
       );
 
-      this.allManagers = this.allUsers.filter((user) => {
-        const manager = managers.find(
-          (identity) => identity.id === user.identityId
+      const allManagers: SelectMultipleOption[] = [];
+
+      managers.forEach((manager) => {
+        const user = this.allUsers.find(
+          (user) => user.identityId === manager.id
         );
 
-        return manager ? true : false;
+        if (user) {
+          allManagers.push({
+            value: user.id as string,
+            viewValue: `${user.name.firstName} ${user.name.lastName}`,
+          });
+        }
       });
-    });
-  }
 
-  getCountries() {
-    this.address.getCountries().subscribe((countries) => {
-      if (countries.data) {
-        this.countries = countries.data;
-      }
-    });
-  }
-
-  formatZip() {
-    const zipCode = this.zipFormControl.value;
-
-    if (!zipCode) return;
-
-    this.zipFormControl.setValue(zipCode.replace(/[^0-9]/g, ''));
-  }
-
-  onChangeZip() {
-    const zipCode = this.zipFormControl.value;
-
-    if (!zipCode) return;
-
-    let countryName = '';
-    let stateName = '';
-    let cityName = '';
-
-    this.address.getInfoByZipCode(zipCode).subscribe((info) => {
-      if (info.results && info.results[zipCode] && info.results[zipCode][0]) {
-        countryName = this.countries.find(
-          (country) => country.Iso2 === info.results[zipCode][0].country_code
-        )?.name as string;
-        stateName = info.results[zipCode][0].state_en;
-        cityName = info.results[zipCode][0].province;
-
-        this.countryFormControl.setValue(countryName);
-        this.onChangeCountry(countryName);
-
-        this.stateFormControl.setValue(stateName);
-        this.onChangeState(stateName);
-
-        this.cityFormControl.setValue(cityName);
-      }
-    });
-  }
-
-  onChangeCountry(country: string | null) {
-    const countryName = country || (this.countryFormControl.value as string);
-
-    this.states = [];
-    this.cities = [];
-
-    this.stateFormControl.setValue('');
-    this.cityFormControl.setValue('');
-
-    this.address.getStates(countryName).subscribe((states) => {
-      if (states.data && states.data.states) {
-        this.states = states.data.states;
-      }
-    });
-  }
-
-  onChangeState(state: string | null) {
-    const countryName = this.countryFormControl.value as string;
-    const stateName = state || (this.stateFormControl.value as string);
-
-    this.cities = [];
-    this.cityFormControl.setValue('');
-
-    this.address.getCities(countryName, stateName).subscribe((cities) => {
-      if (cities.data) {
-        this.cities = cities.data;
-      }
-
-      this.loading = false;
+      this.managers = allManagers;
     });
   }
 
   onSubmit() {
     if (this.id === null) return;
-    if (this.fields.some((field) => field.invalid)) return;
 
-    const userToUpdate: User = {
-      id: this.user?.id as string,
-      identityId: this.identity?.id as string,
-      name: {
-        firstName: this.firstNameFormControl.value as string,
-        lastName: this.lastNameFormControl.value as string,
-      },
-      address: {
-        zip: this.zipFormControl.value as string,
-        country: this.countryFormControl.value as string,
-        state: this.stateFormControl.value as string,
-        city: this.cityFormControl.value as string,
-        address: this.addressFormControl.value as string,
-      },
-    };
+    const fieldsAreInvalid =
+      this.firstNameIsInvalid ||
+      this.lastNameIsInvalid ||
+      this.roleIsInvalid ||
+      this.zipIsInvalid ||
+      this.countryIsInvalid ||
+      this.stateIsInvalid ||
+      this.cityIsInvalid ||
+      this.addressIsInvalid;
 
-    const identityRole = this.roles.find(
+    if (this.id === null || fieldsAreInvalid) {
+      this.matSnackBar.open('Invalid fields! Check that the fields have been filled in correctly.', '', {
+        duration: 4000,
+        panelClass: ['red-snackbar'],
+      });
+
+      return;
+    }
+
+    const identityRole = this.allRoles.find(
       (role) => role.name === this.identity?.roleName
     )?.enumId as number;
 
-    const identityRoleToUpdate = this.roles.find(
-      (role) => role.id === this.roleFormControl.value
-    )?.enumId as number;
+    const roleUpdated = parseInt(this.role);
+    const nameHasBeenUpdated =
+      this.user?.name.firstName !== this.name.firstName ||
+      this.user?.name.lastName !== this.name.lastName;
+    const addressHasBeenUpdated =
+      this.user?.address.zip !== this.address.zip ||
+      this.user?.address.country !== this.address.country ||
+      this.user?.address.state !== this.address.state ||
+      this.user?.address.city !== this.address.city ||
+      this.user?.address.address !== this.address.address;
 
-    identityRole !== identityRoleToUpdate
-      ? (this.roleHasBeenUpdated = false)
-      : (this.roleHasBeenUpdated = true);
-    this.verifyUserHasBeenUpdated()
-      ? (this.userHasBeenUpdated = false)
-      : (this.userHasBeenUpdated = true);
+    const userToUpdate: User = {
+      id: this.user?.id,
+      identityId: this.identity?.id as string,
+      name: {
+        firstName: this.name.firstName,
+        lastName: this.name.lastName,
+      },
+      address: {
+        zip: this.address.zip,
+        country: this.address.country,
+        state: this.address.state,
+        city: this.address.city,
+        address: this.address.address,
+      },
+    };
 
-    if (identityRole !== identityRoleToUpdate) {
-      this.identityService
-        .updateIdentityRole(this.id, identityRoleToUpdate)
-        .subscribe(() => {
+    if (identityRole !== roleUpdated) {
+      this.identityService.updateIdentityRole(this.id, roleUpdated).subscribe(
+        () => {
           this.roleHasBeenUpdated = true;
+          this.matSnackBar.open('User updated successfully!', '', {
+            duration: 4000,
+            panelClass: ['green-snackbar'],
+          });
 
           this.reloadPage();
-        });
+        },
+        () => {
+          this.matSnackBar.open('Error updating user!', '', {
+            duration: 4000,
+            panelClass: ['red-snackbar'],
+          });
+        }
+      );
+    } else {
+      this.roleHasBeenUpdated = true;
     }
 
-    if (this.verifyUserHasBeenUpdated()) {
+    if ((nameHasBeenUpdated || addressHasBeenUpdated) && userToUpdate) {
       this.userService
         .updateUser(this.user?.id as string, userToUpdate)
-        .subscribe(() => {
-          this.userHasBeenUpdated = true;
+        .subscribe(
+          () => {
+            this.userHasBeenUpdated = true;
+            this.matSnackBar.open('User updated successfully!', '', {
+              duration: 4000,
+              panelClass: ['green-snackbar'],
+            });
 
-          this.reloadPage();
-        });
+            this.reloadPage();
+          },
+          () => {
+            this.matSnackBar.open('Error updating user!', '', {
+              duration: 4000,
+              panelClass: ['red-snackbar'],
+            });
+          }
+        );
+    } else {
+      this.userHasBeenUpdated = true;
     }
   }
 
-  onActivate() {
+  onActivate(event: Event) {
+    event.preventDefault();
+
     if (this.id === null) return;
 
     this.identityService.activateIdentity(this.id).subscribe(() => {
@@ -379,19 +351,19 @@ export class UserEditComponent implements OnInit {
     });
   }
 
-  onDeactivate() {
+  onDeactivate(event: Event) {
+    event.preventDefault();
+
     if (this.id === null) return;
 
-    this.identityService.deleteIdentity(this.id).subscribe(() => {
+    this.identityService.deactivateIdentity(this.id).subscribe(() => {
       this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
         this.router.navigate([this.currentUrl]);
       });
     });
   }
 
-  onChangeSupervisors() {
-    const supervisorsToUpdate = this.supervisorsFormControl.value as string[];
-
+  changeSupervisorsValue(supervisorsToUpdate: string[]) {
     const supervisorsToAdd = supervisorsToUpdate.filter(
       (supervisor) => !this.userSupervisors.includes(supervisor)
     );
@@ -442,24 +414,6 @@ export class UserEditComponent implements OnInit {
             });
         });
     });
-  }
-
-  verifyUserHasBeenUpdated(): boolean {
-    let userHasBeenUpdated = false;
-
-    if (
-      this.user?.name.firstName !== this.firstNameFormControl.value ||
-      this.user?.name.lastName !== this.lastNameFormControl.value ||
-      this.user?.address.zip !== this.zipFormControl.value ||
-      this.user?.address.country !== this.countryFormControl.value ||
-      this.user?.address.state !== this.stateFormControl.value ||
-      this.user?.address.city !== this.cityFormControl.value ||
-      this.user?.address.address !== this.addressFormControl.value
-    ) {
-      userHasBeenUpdated = true;
-    }
-
-    return userHasBeenUpdated;
   }
 
   reloadPage() {

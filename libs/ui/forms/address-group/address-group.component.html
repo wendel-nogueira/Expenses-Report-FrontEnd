@@ -1,0 +1,62 @@
+<div class="w-full">
+  <app-form-group>
+    <app-input-text
+      [value]="zip"
+      [label]="'Zip'"
+      [name]="'zip'"
+      [placeholder]="'Ex. 12345'"
+      [minLength]="2"
+      [maxLength]="10"
+      [type]="'number'"
+      [isDisabled]="loading && loadingValue || isDisabled"
+      (changeValue)="zipChangeValue($event)"
+      (isInvalid)="zipIsInvalid = $event"
+      class="w-full"
+    />
+    <app-select
+      class="w-full"
+      [label]="'Country'"
+      [options]="countries"
+      [value]="country"
+      [isDisabled]="loading && loadingValue || isDisabled"
+      (changeValue)="countryChangeValue($event)"
+      (isInvalid)="countryIsInvalid = $event"
+    />
+  </app-form-group>
+
+  <app-form-group>
+    <app-select
+      class="w-full"
+      [label]="'State'"
+      [options]="states"
+      [value]="state"
+      [isDisabled]="loading && loadingValue || isDisabled"
+      (changeValue)="stateChangeValue($event)"
+      (isInvalid)="stateIsInvalid = $event"
+    />
+    <app-select
+      class="w-full"
+      [label]="'City'"
+      [options]="cities"
+      [value]="city"
+      [isDisabled]="loading && loadingValue || isDisabled"
+      (changeValue)="cityChangeValue($event)"
+      (isInvalid)="cityIsInvalid = $event"
+    />
+  </app-form-group>
+
+  <app-form-group>
+    <app-input-text
+      [value]="address"
+      [label]="'Address'"
+      [name]="'address'"
+      [placeholder]="'Ex. 1234 Main St'"
+      [minLength]="2"
+      [maxLength]="50"
+      [isDisabled]="loading && loadingValue || isDisabled"
+      (changeValue)="addressChangeValue($event)"
+      (isInvalid)="addressIsInvalid = $event"
+      class="w-full"
+    />
+  </app-form-group>
+</div>

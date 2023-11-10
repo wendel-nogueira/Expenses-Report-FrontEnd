@@ -66,12 +66,17 @@ export class UserService {
   }
 
   handleError(error: HttpErrorResponse) {
-    let errorMessage = '';
+    const errorMessage = {
+      code: error.status,
+      message: '',
+      errors: [],
+    };
 
     if (error.error instanceof ErrorEvent) {
-      errorMessage = error.error.message;
+      errorMessage.message = error.error.message;
     } else {
-      errorMessage = `Error Code : ${error.status}\nMessage : ${error.message}`;
+      errorMessage.message = error.message;
+      errorMessage.errors = error.error.errors;
     }
 
     return throwError(errorMessage);

@@ -5,19 +5,26 @@
   style="background-color: #f2f2f2"
 >
   <mat-sidenav
-    opened
-    disableClose
+    [opened]="!isMobile || menuOpened"
+    disableClose="!isMobile"
     [fixedInViewport]="true"
-    mode="side"
+    [mode]="isMobile ? 'over' : 'side'"
     class="h-full min-w-fit max-w-max w-full mat-elevation-z8"
-    style="border: none; background: red"
+    style="border: none"
   >
-    <lib-header></lib-header>
+    <lib-header (menuChange)="menuOpened = !menuOpened"></lib-header>
   </mat-sidenav>
   <mat-sidenav-content
     class="flex flex-col justify-between py-4 px-4 w-auto min-h-screen"
     style="display: flex"
   >
+    <div
+      class="w-6 h-6 cursor-pointer fixed right-4 top-4 elevation-2 z-50"
+      (click)="menuOpened = !menuOpened"
+      *ngIf="isMobile"
+    >
+      <mat-icon svgIcon="list"></mat-icon>
+    </div>
     <div>
       <router-outlet></router-outlet>
     </div>

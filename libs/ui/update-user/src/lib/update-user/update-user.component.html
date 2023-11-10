@@ -1,226 +1,91 @@
-<div id="update-user" class="w-full h-full flex items-center justify-center">
-  <div class="py-4 px-6 bg-white shadow-md rounded-lg w-3/5">
-    <mat-stepper [linear]="true" #stepper>
-        <mat-step [stepControl]="nameFormGroup" label="Name">
-          <form [formGroup]="nameFormGroup" class="mt-5">
-            <mat-form-field class="w-full">
-              <mat-label>First Name</mat-label>
-              <input
-                type="text"
-                matInput
-                formControlName="firstName"
-                [errorStateMatcher]="matcher"
-                placeholder="Ex. John"
-                minlength="2"
-                maxlength="50"
-                name="firstName"
-              />
-              <mat-error
-                *ngIf="
-                  nameFormGroup.get('firstName')!.hasError('minlength') ||
-                  nameFormGroup.get('firstName')!.hasError('maxlength')
-                "
-                class="font-normal text-xs mt-1"
-              >
-                First Name must be between <strong class="font-bold">2</strong> and
-                <strong class="font-bold">50</strong> characters
-              </mat-error>
-              <mat-error
-                *ngIf="nameFormGroup.get('firstName')!.hasError('required')"
-                class="font-normal text-xs mt-1"
-              >
-                First Name is <strong class="font-bold">required</strong>
-              </mat-error>
-            </mat-form-field>
-    
-            <mat-form-field class="w-full">
-              <mat-label>Last Name</mat-label>
-              <input
-                type="text"
-                matInput
-                formControlName="lastName"
-                [errorStateMatcher]="matcher"
-                placeholder="Ex. Doe"
-                minlength="2"
-                maxlength="50"
-                name="lastName"
-              />
-              <mat-error
-                *ngIf="
-                  nameFormGroup.get('lastName')!.hasError('minlength') ||
-                  nameFormGroup.get('lastName')!.hasError('maxlength')
-                "
-                class="font-normal text-xs mt-1"
-              >
-                Last Name must be between <strong class="font-bold">2</strong> and
-                <strong class="font-bold">50</strong> characters
-              </mat-error>
-              <mat-error
-                *ngIf="nameFormGroup.get('lastName')!.hasError('required')"
-                class="font-normal text-xs mt-1"
-              >
-                Last Name is <strong class="font-bold">required</strong>
-              </mat-error>
-            </mat-form-field>
-    
-            <div>
-              <button
-                id="next"
-                mat-flat-button
-                matStepperNext
-                class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 bg-blue-400 hover:bg-blue-500 mat-elevation-z2"
-                type="submit"
-                (click)="onSubmit()"
-              >
-                <span>next</span>
-              </button>
-            </div>
-          </form>
-        </mat-step>
-        <mat-step [stepControl]="addressFormGroup" label="Address">
-          <form [formGroup]="addressFormGroup" class="mt-5">
-            <div class="flex items-center gap-3">
-              <mat-form-field class="w-full">
-                <mat-label>Zip</mat-label>
-                <input
-                  type="text"
-                  matInput
-                  formControlName="zip"
-                  [errorStateMatcher]="matcher"
-                  placeholder="Ex. 12345"
-                  minlength="2"
-                  maxlength="10"
-                  (input)="formatZip()"
-                  (change)="onChangeZip()"
-                  name="zip"
-                />
-                <mat-error
-                  *ngIf="
-                    addressFormGroup.get('zip')!.hasError('minlength') ||
-                    addressFormGroup.get('zip')!.hasError('maxlength')
-                  "
-                  class="font-normal text-xs mt-1"
-                >
-                  Zip must be between <strong class="font-bold">2</strong> and
-                  <strong class="font-bold">10</strong> characters
-                </mat-error>
-                <mat-error
-                  *ngIf="addressFormGroup.get('zip')!.hasError('required')"
-                  class="font-normal text-xs mt-1"
-                >
-                  Zip is <strong class="font-bold">required</strong>
-                </mat-error>
-              </mat-form-field>
-              <mat-form-field class="w-full">
-                <mat-label>Country</mat-label>
-                <mat-select
-                  formControlName="country"
-                  [errorStateMatcher]="matcher"
-                  (selectionChange)="onChangeCountry(null)"
-                >
-                  <mat-option
-                    *ngFor="let country of countries"
-                    [value]="country.name"
-                  >
-                    {{ country.name }}
-                  </mat-option>
-                </mat-select>
-                <mat-error
-                  *ngIf="addressFormGroup.get('country')!.hasError('required')"
-                  class="font-normal text-xs mt-1"
-                  >Country is <strong class="font-bold">required</strong></mat-error
-                >
-              </mat-form-field>
-            </div>
-    
-            <div class="flex items-center gap-3">
-              <mat-form-field class="w-full">
-                <mat-label>State</mat-label>
-                <mat-select
-                  formControlName="state"
-                  [errorStateMatcher]="matcher"
-                  (selectionChange)="onChangeState(null)"
-                >
-                  <mat-option *ngFor="let state of states" [value]="state.name">
-                    {{ state.name }}
-                  </mat-option>
-                </mat-select>
-                <mat-error
-                  *ngIf="addressFormGroup.get('state')!.hasError('required')"
-                  class="font-normal text-xs mt-1"
-                  >State is <strong class="font-bold">required</strong></mat-error
-                >
-              </mat-form-field>
-              <mat-form-field class="w-full">
-                <mat-label>City</mat-label>
-                <mat-select formControlName="city" [errorStateMatcher]="matcher">
-                  <mat-option *ngFor="let city of cities" [value]="city">
-                    {{ city }}
-                  </mat-option>
-                </mat-select>
-                <mat-error
-                  *ngIf="addressFormGroup.get('city')!.hasError('required')"
-                  class="font-normal text-xs mt-1"
-                  >City is <strong class="font-bold">required</strong></mat-error
-                >
-              </mat-form-field>
-            </div>
-    
-            <div class="flex items-center gap-3">
-              <mat-form-field class="w-full">
-                <mat-label>Address</mat-label>
-                <input
-                  type="text"
-                  matInput
-                  formControlName="address"
-                  [errorStateMatcher]="matcher"
-                  placeholder="Ex. 1234 Main St"
-                  minlength="2"
-                  maxlength="50"
-                  name="address"
-                />
-                <mat-error
-                  *ngIf="
-                    addressFormGroup.get('address')!.hasError('minlength') ||
-                    addressFormGroup.get('address')!.hasError('maxlength')
-                  "
-                  class="font-normal text-xs mt-1"
-                >
-                  Address must be between <strong class="font-bold">2</strong> and
-                  <strong class="font-bold">50</strong> characters
-                </mat-error>
-                <mat-error
-                  *ngIf="addressFormGroup.get('address')!.hasError('required')"
-                  class="font-normal text-xs mt-1"
-                >
-                  Address is <strong class="font-bold">required</strong>
-                </mat-error>
-              </mat-form-field>
-            </div>
-    
-            <div class="flex gap-3">
-              <button
-                id="back"
-                mat-flat-button
-                matStepperPrevious
-                class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 mat-elevation-z2"
-                type="submit"
-                (click)="onSubmit()"
-              >
-                <span>back</span>
-              </button>
-              <button
-                id="next"
-                mat-flat-button
-                class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 mat-elevation-z2"
-                type="submit"
-                (click)="onSubmit()"
-              >
-                <span>save</span>
-              </button>
-            </div>
-          </form>
-        </mat-step>
-      </mat-stepper>
-  </div>
+<div
+  id="update-user"
+  class="w-full h-full flex items-center justify-center px-4"
+>
+  <app-content class="w-full">
+    <app-subheader
+      [title]="'Update User'"
+      [subtitle]="'update your information'"
+    />
+    <mat-stepper [linear]="true" #stepper class="w-full">
+      <mat-step label="Name" class="w-full">
+        <app-form class="w-full">
+          <app-form-group class="w-full">
+            <app-input-text
+              [value]="name.firstName"
+              [label]="'First Name'"
+              [name]="'firstName'"
+              [placeholder]="'Ex. Jhon'"
+              [minLength]="2"
+              [maxLength]="50"
+              (changeValue)="name.firstName = $event"
+              (isInvalid)="firstNameIsInvalid = $event"
+              class="w-full"
+            />
+            <app-input-text
+              [value]="name.lastName"
+              [label]="'Last Name'"
+              [name]="'lastName'"
+              [placeholder]="'Ex. Doe'"
+              [minLength]="2"
+              [maxLength]="50"
+              (changeValue)="name.lastName = $event"
+              (isInvalid)="lastNameIsInvalid = $event"
+              class="w-full"
+            />
+          </app-form-group>
+          <app-button-group class="w-full md:w-min">
+            <app-flat-button
+              [label]="'next'"
+              [useIcon]="false"
+              [type]="'success'"
+              (click)="next(stepper)"
+              class="w-full"
+            ></app-flat-button>
+          </app-button-group>
+        </app-form>
+      </mat-step>
+      <mat-step label="Address" class="w-full">
+        <app-form class="w-full">
+          <app-form-group class="w-full">
+            <app-address-group
+              [loadingValue]="false"
+              [zipValue]="address.zip"
+              [countryValue]="address.country"
+              [stateValue]="address.state"
+              [cityValue]="address.city"
+              [addressValue]="address.address"
+              (changeZipValue)="address.zip = $event"
+              (changeZipIsInvalid)="zipIsInvalid = $event"
+              (changeCountryValue)="address.country = $event"
+              (changeCountryIsInvalid)="countryIsInvalid = $event"
+              (changeStateValue)="address.state = $event"
+              (changeStateIsInvalid)="stateIsInvalid = $event"
+              (changeCityValue)="address.city = $event"
+              (changeCityIsInvalid)="cityIsInvalid = $event"
+              (changeAddressValue)="address.address = $event"
+              (changeAddressIsInvalid)="addressIsInvalid = $event"
+              class="w-full"
+            ></app-address-group>
+          </app-form-group>
+          <app-button-group class="md:w-min">
+            <app-flat-button
+              [label]="'back'"
+              [useIcon]="false"
+              [type]="'danger'"
+              class="w-full"
+              (click)="stepper.previous()"
+            ></app-flat-button>
+            <app-flat-button
+              [label]="'confirm'"
+              [useIcon]="false"
+              [type]="'success'"
+              class="w-full"
+              (click)="onSubmit()"
+            ></app-flat-button>
+          </app-button-group>
+        </app-form>
+      </mat-step>
+    </mat-stepper>
+  </app-content>
 </div>

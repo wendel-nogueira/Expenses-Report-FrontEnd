@@ -1,0 +1,35 @@
+<button
+  mat-flat-button
+  class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 mat-elevation-z2 w-full"
+  (click)="onClick($event)"
+  [disabled]="loading"
+  style="background-color: {{
+    type === 'success' && !loading
+      ? '#4ADE80'
+      : type === 'warning' && !loading
+      ? '#FB923C'
+      : type === 'danger' && !loading
+      ? '#F87171'
+      : !loading
+      ? '#60A5FA'
+      : '#DEDEDE'
+  }};
+  min-width: 100px;"
+>
+  <div *ngIf="!loading" class="w-full flex items-center justify-center gap-2">
+    <mat-icon
+      svgIcon="{{ icon }}"
+      *ngIf="useIcon"
+      class="text-white flex items-center justify-center"
+    ></mat-icon>
+    <span class="text-white flex items-center justify-center">
+      {{ label }}
+    </span>
+  </div>
+  <mat-spinner
+    *ngIf="loading"
+    diameter="20"
+    mode="indeterminate"
+    class="text-white"
+  ></mat-spinner>
+</button>

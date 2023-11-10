@@ -1,19 +1,16 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDividerModule } from '@angular/material/divider';
-import {
-  FormControl,
-  Validators,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from 'libs/services/auth/auth.service';
 import { IdentityService } from 'libs/services/identity/identity.service';
+import { RouterModule } from '@angular/router';
+import { InputEmailComponent } from 'libs/ui/forms/input-email/input-email.component';
+import { FlatButtonComponent } from 'libs/ui/buttons/flat-button/flat-button.component';
+import { FormGroupComponent } from 'libs/ui/forms/form-group/form-group.component';
+import { ButtonGroupComponent } from 'libs/ui/buttons/button-group/button-group.component';
+import { FormComponent } from 'libs/ui/forms/form/form.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'lib-security',
@@ -22,86 +19,98 @@ import { IdentityService } from 'libs/services/identity/identity.service';
   styleUrls: ['./security.component.css'],
   imports: [
     CommonModule,
+    RouterModule,
+    InputEmailComponent,
+    FlatButtonComponent,
+    FormGroupComponent,
+    ButtonGroupComponent,
+    FormComponent,
+    MatSnackBarModule,
     MatDividerModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatProgressSpinnerModule,
+    MatSnackBarModule,
   ],
 })
-export class SecurityComponent {
+export class SecurityComponent implements OnInit {
+  id = '';
+
   isChangeEmail = false;
   loading = false;
 
+  emailExists = false;
+  newEmail = '';
+  newEmailIsInvalid = false;
+  confirmNewEmail = '';
+  confirmNewEmailIsInvalid = false;
+
   constructor(
     private authService: AuthService,
-    private identityService: IdentityService
+    private identityService: IdentityService,
+    private matSnackBar: MatSnackBar
   ) {}
 
-  changeEmailFormControl = new FormControl('', [
-    Validators.required,
-    Validators.email,
-    Validators.minLength(2),
-    Validators.maxLength(50),
-    Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$'),
-  ]);
+  ngOnInit(): void {
+    const identity = this.authService.getIdentity();
 
-  confirmChangeEmailFormControl = new FormControl('', [
-    Validators.required,
-    Validators.email,
-    Validators.minLength(2),
-    Validators.maxLength(50),
-    Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$'),
-  ]);
+    if (!identity) return;
 
-  fields = [this.changeEmailFormControl, this.confirmChangeEmailFormControl];
+    this.id = identity.nameid;
+  }
 
-  matcher = new ErrorStateMatcher();
+  emailChangeValue(value: string) {
+    if (this.newEmailIsInvalid) return;
 
-  onChangeEmailChange() {
-    if (this.changeEmailFormControl.invalid) return;
+    this.newEmail = value;
 
-    const email = this.changeEmailFormControl.value as string;
-
-    this.identityService.checkEmailExists(email).subscribe((exists) => {
-      if (exists) {
-        this.changeEmailFormControl.setErrors({ invalid: true });
+    this.identityService.checkEmailExists(this.newEmail).subscribe((exists) => {
+      if (exists && exists.id !== this.id) {
+        this.emailExists = true;
+        this.newEmailIsInvalid = true;
       }
     });
   }
 
-  onConfirmChangeEmailChange() {
-    if (this.confirmChangeEmailFormControl.invalid) return;
+  confirmEmailChangeValue(value: string) {
+    if (this.confirmNewEmailIsInvalid) return;
 
-    const email = this.changeEmailFormControl.value as string;
-    const confirmEmail = this.confirmChangeEmailFormControl.value as string;
+    this.confirmNewEmail = value;
 
-    if (email !== confirmEmail) {
-      this.confirmChangeEmailFormControl.setErrors({ invalid: true });
+    if (this.newEmail !== this.confirmNewEmail) {
+      this.confirmNewEmailIsInvalid = true;
     }
   }
 
-  onSubmitChangeEmail() {
-    if (this.fields.some((field) => field.invalid)) return;
+  onSubmitChangeEmail(event: Event) {
+    event.preventDefault();
 
-    const email = this.changeEmailFormControl.value as string;
-    const confirmEmail = this.confirmChangeEmailFormControl.value as string;
+    if (this.newEmailIsInvalid || this.confirmNewEmailIsInvalid) {
+      this.matSnackBar.open('Invalid fields! Check that the fields have been filled in correctly.', '', {
+        duration: 4000,
+        panelClass: ['red-snackbar'],
+      });
 
-    if (email !== confirmEmail) {
-      this.confirmChangeEmailFormControl.setErrors({ invalid: true });
       return;
-    }
+    };
 
     this.loading = true;
 
-    this.authService.changeEmail(email).subscribe(
+    this.authService.changeEmail(this.newEmail).subscribe(
       () => {
         this.loading = false;
+
+        this.matSnackBar.open('Updated successfully!', '', {
+          duration: 4000,
+          panelClass: ['green-snackbar'],
+        });
+
         this.authService.logout();
       },
       () => {
         this.loading = false;
+
+        this.matSnackBar.open('Error while updating!', '', {
+          duration: 4000,
+          panelClass: ['red-snackbar'],
+        });
       }
     );
   }

@@ -108,11 +108,22 @@ export class AppComponent {
         '../assets/sign-out.svg'
       )
     );
-    
     this.matIconRegistry.addSvgIcon(
       'gear',
       this.domSanitizer.bypassSecurityTrustResourceUrl(
         '../assets/gear.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'list',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/list.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'close',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/x.svg'
       )
     );
   }

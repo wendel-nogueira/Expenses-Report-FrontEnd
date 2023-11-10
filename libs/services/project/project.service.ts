@@ -43,25 +43,30 @@ export class ProjectService {
       .pipe(retry(2), catchError(this.handleError));
   }
 
-  deleteProject(id: string): Observable<Project> {
-    return this.httpClient
-      .delete<Project>(`${this.apiURL}/${id}`)
-      .pipe(retry(2), catchError(this.handleError));
-  }
-
   activateProject(id: string): Observable<Project> {
     return this.httpClient
       .patch<Project>(`${this.apiURL}/${id}/activate`, null)
       .pipe(retry(2), catchError(this.handleError));
   }
+
+  deactivateProject(id: string): Observable<Project> {
+    return this.httpClient
+      .delete<Project>(`${this.apiURL}/${id}/deactivate`)
+      .pipe(retry(2), catchError(this.handleError));
+  }
   
   handleError(error: HttpErrorResponse) {
-    let errorMessage = '';
+    const errorMessage = {
+      code: error.status,
+      message: '',
+      errors: [],
+    };
 
     if (error.error instanceof ErrorEvent) {
-      errorMessage = error.error.message;
+      errorMessage.message = error.error.message;
     } else {
-      errorMessage = `Error Code : ${error.status}\nMessage : ${error.message}`;
+      errorMessage.message = error.message;
+      errorMessage.errors = error.error.errors;
     }
 
     return throwError(errorMessage);
