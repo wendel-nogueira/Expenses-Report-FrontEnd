@@ -1,0 +1,61 @@
+<mat-list-item
+  style="padding: 0; height: fit-content"
+  class="transition-all {{ showOptions && !show ? 'menu-open' : '' }}"
+  (click)="onClick()"
+>
+  <div (click)="toggleOptions()">
+    <a
+      [routerLink]="[link]"
+      class="flex flex-row gap-3 items-center justify-start transition-colors px-4 py-1 cursor-pointer w-full border-l-2 border-transparent {{
+        effect ? 'hover:border-white hover:bg-blue-600' : ''
+      }}"
+      (click)="onClickLink(true)"
+      *ngIf="link !== ''"
+    >
+      <div class="w-8 h-8 flex flex-row items-center justify-center">
+        <mat-icon svgIcon="{{ icon }}"></mat-icon>
+      </div>
+      <div class="transition {{ show ? 'hidden' : 'block' }}">
+        <p class="m-0 font-light text-base text-slate-200" style="margin: 0">
+          {{ text }}
+        </p>
+      </div>
+    </a>
+    <div
+      *ngIf="link === ''"
+      class="flex flex-row gap-3 items-center justify-start transition-colors px-4 py-1 cursor-pointer w-full border-l-2 border-transparent {{
+        effect ? 'hover:border-white hover:bg-blue-600' : ''
+      }}"
+    >
+      <div class="w-8 h-8 flex flex-row items-center justify-center">
+        <mat-icon svgIcon="{{ icon }}"></mat-icon>
+      </div>
+      <div class="transition {{ show ? 'hidden' : 'block' }}">
+        <p class="m-0 font-light text-base text-slate-200" style="margin: 0">
+          {{ text }}
+        </p>
+      </div>
+    </div>
+  </div>
+  <div
+    class="flex flex-row gap-3 items-center justify-start rounded-md transition-colors px-4 py-1 cursor-pointer w-full"
+    *ngIf="showOptions && !show"
+  >
+    <div class="transition flex flex-col gap-2 w-full">
+      <a
+        [routerLink]="item.link"
+        *ngFor="let item of items"
+        class="pl-4 border-l-2 border-transparent hover:border-white transition-all"
+        (click)="onClickLink(false)"
+      >
+        <p
+          class="m-0 font-light text-base text-slate-200"
+          style="margin: 0"
+          *ngIf="item.show"
+        >
+          {{ item.text }}
+        </p>
+      </a>
+    </div>
+  </div>
+</mat-list-item>

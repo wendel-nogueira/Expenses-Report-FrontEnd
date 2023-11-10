@@ -1,0 +1,47 @@
+<div class="w-full flex flex-col items-center justify-center gap-6">
+  <app-subheader
+    [title]="'Login'"
+    [subtitle]="'use your email and password to sign in!'"
+  ></app-subheader>
+  <div class="w-full">
+    <app-form class="w-full">
+      <app-form-group class="w-full">
+        <app-input-email
+          [value]="email"
+          [label]="'Email'"
+          (changeValue)="email = $event"
+          (isInvalid)="emailIsInvalid = $event"
+          class="w-full"
+        />
+      </app-form-group>
+
+      <app-form-group class="w-full">
+        <app-input-password
+          [value]="password"
+          [label]="'Password'"
+          (changeValue)="password = $event"
+          (isInvalid)="passwordIsInvalid = $event"
+          class="w-full"
+        />
+      </app-form-group>
+      <p
+        class="text-blue-500 text-sm hover:underline cursor-pointer ml-auto"
+        (click)="onClickResetPassword()"
+      >
+        Forgot password?
+      </p>
+
+      <app-button-group class="w-full">
+        <app-flat-button
+          [label]="'login'"
+          [icon]="'add'"
+          [type]="'success'"
+          [useIcon]="false"
+          [loading]="isLoading"
+          (clickButton)="onSubmit()"
+          class="w-full"
+        ></app-flat-button>
+      </app-button-group>
+    </app-form>
+  </div>
+</div>

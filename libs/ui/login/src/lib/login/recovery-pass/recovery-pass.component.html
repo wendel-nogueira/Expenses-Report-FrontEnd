@@ -1,0 +1,38 @@
+<div class="w-full flex flex-col items-center justify-center gap-6">
+  <app-subheader
+    [title]="'Reset Password'"
+    [subtitle]="'enter your email to reset your password!'"
+  ></app-subheader>
+  <div class="w-full">
+    <app-form class="w-full">
+      <app-form-group class="w-full">
+        <app-input-email
+          [value]="resetPasswordEmail"
+          [label]="'Email'"
+          (changeValue)="resetPasswordEmail = $event"
+          (isInvalid)="resetPasswordEmailIsInvalid = $event"
+          class="w-full"
+        />
+      </app-form-group>
+
+      <app-button-group class="w-full">
+        <app-flat-button
+          [label]="'send'"
+          [icon]="'check'"
+          [type]="'success'"
+          [loading]="isLoading"
+          (clickButton)="onSubmit()"
+          class="w-full"
+        ></app-flat-button>
+        <app-flat-button
+          [label]="'cancel'"
+          [icon]="'close'"
+          [type]="'danger'"
+          [loading]="isLoading"
+          (clickButton)="onClickCancel()"
+          class="w-full"
+        ></app-flat-button>
+      </app-button-group>
+    </app-form>
+  </div>
+</div>

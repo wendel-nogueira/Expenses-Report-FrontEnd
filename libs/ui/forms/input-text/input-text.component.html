@@ -1,0 +1,47 @@
+<mat-form-field class="w-full">
+  <mat-label>{{ label }}</mat-label>
+  <input
+    type="{{ type }}"
+    matInput
+    [formControl]="fieldFormControl"
+    [errorStateMatcher]="matcher"
+    placeholder="{{ placeholder }}"
+    minlength="{{ minLength }}"
+    maxlength="{{ maxLength }}"
+    name="{{ name }}"
+    (change)="onChangeValue($event)"
+    (input)="onInputValue($event)"
+  />
+  <mat-error
+    *ngIf="
+      !fieldFormControl.hasError('pattern') &&
+      !fieldFormControl.hasError('required') &&
+      !fieldFormControl.hasError('minlength') &&
+      !fieldFormControl.hasError('maxlength')
+    "
+    class="font-normal text-xs mt-1"
+  >
+    {{ label }} already exists
+  </mat-error>
+  <mat-error
+    *ngIf="
+      fieldFormControl.hasError('minlength') ||
+      fieldFormControl.hasError('maxlength')
+    "
+    class="font-normal text-xs mt-1"
+  >
+    {{ label }} must be between
+    <strong class="font-bold">{{ minLength }}</strong> and
+    <strong class="font-bold">{{ maxLength }}</strong> characters
+  </mat-error>
+  <mat-error
+    *ngIf="
+      fieldFormControl.hasError('required') &&
+      !alreadyExists &&
+      !fieldFormControl.hasError('pattern')
+    "
+    class="font-normal text-xs mt-1"
+  >
+    {{ label }} is <strong class="font-bold">required</strong>
+  </mat-error>
+</mat-form-field>

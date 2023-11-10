@@ -1,0 +1,50 @@
+<mat-form-field class="w-full">
+  <mat-label>
+    {{ label }}
+  </mat-label>
+  <input
+    type="email"
+    matInput
+    [formControl]="emailFormControl"
+    [errorStateMatcher]="matcher"
+    placeholder="Ex. jhon_doe@email.com"
+    minlength="2"
+    maxlength="50"
+    name="email"
+    [value]="value"
+    (input)="onInputValue()"
+    (change)="onChangeValue($event)"
+  />
+  <mat-error
+    *ngIf="
+      !emailFormControl.hasError('pattern') &&
+      !emailFormControl.hasError('email') &&
+      !emailFormControl.hasError('required') &&
+      !emailFormControl.hasError('minlength') &&
+      !emailFormControl.hasError('maxlength')
+    "
+    class="font-normal text-xs mt-1"
+  >
+    Email already exists
+  </mat-error>
+  <mat-error
+    *ngIf="
+      emailFormControl.hasError('pattern') &&
+      !emailExists &&
+      !emailFormControl.hasError('required')
+    "
+    class="font-normal text-xs mt-1"
+  >
+    Please enter a valid email address
+  </mat-error>
+  <mat-error
+    *ngIf="
+      emailFormControl.hasError('required') &&
+      !emailExists &&
+      !emailFormControl.hasError('pattern')
+    "
+    class="font-normal text-xs mt-1"
+  >
+    Email is <strong class="font-bold">required</strong>
+  </mat-error>
+</mat-form-field>

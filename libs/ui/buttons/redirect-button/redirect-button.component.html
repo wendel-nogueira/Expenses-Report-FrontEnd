@@ -1,0 +1,20 @@
+<a [routerLink]="path">
+  <button
+    mat-flat-button
+    class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 mat-elevation-z2 w-full"
+    style="background-color: {{
+      type === 'success'
+        ? '#4ADE80'
+        : type === 'warning'
+        ? '#FB923C'
+        : type === 'danger'
+        ? '#F87171'
+        : '#60A5FA'
+    }};"
+  >
+    <mat-icon svgIcon="{{ icon }}" class="text-white"></mat-icon>
+    <span class="ml-2" class="text-white">
+      {{ label }}
+    </span>
+  </button>
+</a>

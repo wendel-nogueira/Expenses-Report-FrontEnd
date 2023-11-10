@@ -1,172 +1,81 @@
-<div class="flex flex-col gap-8 mt-20">
-  <div>
-    <h2 class="text-2xl text-center text-slate-900 mb-2">update project</h2>
-    <p class="text-center font-light text-slate-500">
-      use the form below to update a project
-    </p>
-  </div>
-
-  <div
-    class="flex flex-col gap-6 items-center py-16 px-0 bg-white rounded-md mx-auto shadow-md"
-  >
-    <form class="w-4/5 flex flex-col gap-5" *ngIf="!loading && project">
-      <mat-form-field class="w-full">
-        <mat-label>Name</mat-label>
-        <input
-          type="text"
-          matInput
-          [formControl]="nameFormControl"
-          [errorStateMatcher]="matcher"
-          placeholder="Ex. Project X"
-          minlength="2"
-          maxlength="50"
-          name="name"
+<div class="flex flex-col items-center gap-8">
+  <app-header
+    [title]="'update project'"
+    [subtitle]="'use the form below to update a project'"
+  />
+  <app-content class="w-full">
+    <app-form class="w-full" [loading]="loading || !project">
+      <app-form-group class="w-full">
+        <app-input-text
+          [value]="name"
+          [label]="'Name'"
+          (changeValue)="project!.name = $event"
+          (isInvalid)="nameIsInvalid = $event"
+          class="w-full"
         />
-        <mat-error
-          *ngIf="
-            nameFormControl.hasError('minlength') ||
-            nameFormControl.hasError('maxlength')
-          "
-          class="font-normal text-xs mt-1"
-        >
-          Name must be between <strong class="font-bold">2</strong> and
-          <strong class="font-bold">50</strong> characters
-        </mat-error>
-        <mat-error
-          *ngIf="nameFormControl.hasError('required')"
-          class="font-normal text-xs mt-1"
-        >
-          Name is <strong class="font-bold">required</strong>
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field class="w-full">
-        <mat-label>Code</mat-label>
-        <input
-          type="text"
-          matInput
-          [formControl]="codeFormControl"
-          [errorStateMatcher]="matcher"
-          placeholder="Ex. PRJX"
-          minlength="2"
-          maxlength="10"
-          name="code"
-          (change)="onCodeChange()"
+      </app-form-group>
+      <app-form-group class="w-full">
+        <app-input-text
+          [value]="code"
+          [label]="'Code'"
+          [alreadyExists]="codeExists"
+          [minLength]="2"
+          [maxLength]="10"
+          (changeValue)="codeChangeValue($event)"
+          (isInvalid)="codeIsInvalid = $event"
+          class="w-full"
         />
-        <mat-error
-          *ngIf="
-            !codeFormControl.hasError('required') &&
-            !codeFormControl.hasError('minlength') &&
-            !codeFormControl.hasError('maxlength')
-          "
-          class="font-normal text-xs mt-1"
-        >
-          Code already exists
-        </mat-error>
-        <mat-error
-          *ngIf="
-            codeFormControl.hasError('minlength') ||
-            codeFormControl.hasError('maxlength')
-          "
-          class="font-normal text-xs mt-1"
-        >
-          Code must be between <strong class="font-bold">2</strong> and
-          <strong class="font-bold">10</strong> characters
-        </mat-error>
-        <mat-error
-          *ngIf="
-            codeFormControl.hasError('minlength') ||
-            codeFormControl.hasError('maxlength')
-          "
-          class="font-normal text-xs mt-1"
-        >
-          Code must be between <strong class="font-bold">2</strong> and
-          <strong class="font-bold">10</strong> characters
-        </mat-error>
-        <mat-error
-          *ngIf="codeFormControl.hasError('required')"
-          class="font-normal text-xs mt-1"
-        >
-          Code is <strong class="font-bold">required</strong>
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field class="w-full">
-        <mat-label>Departament</mat-label>
-        <mat-select
-          [formControl]="departamentFormControl"
-          [errorStateMatcher]="matcher"
-        >
-          <mat-option
-            *ngFor="let departament of departaments"
-            [value]="departament.id"
-          >
-            {{ departament.name }}
-          </mat-option>
-        </mat-select>
-        <mat-error
-          *ngIf="departamentFormControl.hasError('required')"
-          class="font-normal text-xs mt-1"
-          >Departament is <strong class="font-bold">required</strong></mat-error
-        >
-      </mat-form-field>
-
-      <mat-form-field>
-        <mat-label>Description</mat-label>
-        <textarea
-          [formControl]="descriptionFormControl"
-          [errorStateMatcher]="matcher"
-          matInput
-          maxlength="200"
-        ></textarea>
-      </mat-form-field>
-
-      <div class="flex items-center justify-center gap-8">
-        <button
-          mat-flat-button
-          class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 bg-green-400 hover:bg-green-500 mat-elevation-z2"
-          type="submit"
-          (click)="onSubmit()"
-        >
-          <mat-icon svgIcon="add" class="text-white"></mat-icon>
-          <span class="ml-2">create</span>
-        </button>
-        <a [routerLink]="['/projects']">
-          <button
-            mat-flat-button
-            class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 bg-red-400 hover:bg-red-500 mat-elevation-z2"
-          >
-            <mat-icon svgIcon="cancel" class="text-white"></mat-icon>
-            <span class="ml-2">cancel</span>
-          </button>
-        </a>
-        <button
-          mat-flat-button
-          class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 bg-orange-400 hover:bg-orange-500 mat-elevation-z2"
-          (click)="onDeactivate()"
-          *ngIf="project && !project.isDeleted"
-        >
-          <mat-icon svgIcon="trash" class="text-white"></mat-icon>
-          <span class="ml-2">deactivate</span>
-        </button>
-        <button
-          mat-flat-button
-          class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 bg-green-400 hover:bg-green-500 mat-elevation-z2"
-          (click)="onActivate()"
+      </app-form-group>
+      <app-form-group class="w-full">
+        <app-text-field
+          [value]="description"
+          [label]="'Description'"
+          (changeValue)="project!.description = $event"
+          class="w-full"
+        />
+      </app-form-group>
+      <app-form-group class="w-full">
+        <app-select
+          [label]="'Departament'"
+          [options]="departaments"
+          [value]="departament"
+          (changeValue)="project!.departamentId = $event"
+          (isInvalid)="departamentIsInvalid = $event"
+          class="w-full"
+        />
+      </app-form-group>
+      <app-button-group class="w-full">
+        <app-flat-button
+          [label]="'update'"
+          [icon]="'edit'"
+          [type]="'info'"
+          (clickButton)="onSubmit()"
+          class="w-full"
+        ></app-flat-button>
+        <app-redirect-button
+          [label]="'cancel'"
+          [icon]="'cancel'"
+          [type]="'danger'"
+          [path]="'/projects'"
+          class="w-full"
+        ></app-redirect-button>
+        <app-flat-button
           *ngIf="project && project.isDeleted"
-        >
-          <mat-icon svgIcon="check" class="text-white"></mat-icon>
-          <span class="ml-2">activate</span>
-        </button>
-      </div>
-    </form>
-    <div class="flex flex-col items-center justify-center" *ngIf="loading">
-        <mat-spinner
-          *ngIf="loading"
-          class="w-16 h-16 text-center mx-auto"
-          [diameter]="60"
-          [strokeWidth]="5"
-        ></mat-spinner>
-      </div>
-  </div>
+          [label]="'activate'"
+          [icon]="'check'"
+          [type]="'success'"
+          (clickButton)="onActivate($event)"
+          class="w-full"
+        ></app-flat-button>
+        <app-flat-button
+          *ngIf="project && !project.isDeleted"
+          [label]="'deactivate'"
+          [icon]="'trash'"
+          [type]="'warning'"
+          (clickButton)="onDeactivate($event)"
+          class="w-full"
+        ></app-flat-button>
+      </app-button-group>
+    </app-form>
+  </app-content>
 </div>
