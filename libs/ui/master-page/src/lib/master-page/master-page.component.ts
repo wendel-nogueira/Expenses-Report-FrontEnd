@@ -1,10 +1,11 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { HeaderComponent } from '../header/src/lib/header/header.component';
-import { HeaderMobileComponent } from '../header-mobile/src/lib/header-mobile/header-mobile.component';
-import { FooterComponent } from '../footer/src/lib/footer/footer.component';
+import { HeaderComponent } from 'header';
+import { FooterComponent } from 'footer';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'lib-master-page',
@@ -15,15 +16,21 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     CommonModule,
     RouterModule,
     HeaderComponent,
-    HeaderMobileComponent,
     FooterComponent,
     MatSidenavModule,
+    MatIconModule,
   ],
 })
 export class MasterPageComponent {
+  menuOpened = false;
   isMobile = false;
 
+  constructor() {
+    this.onResize();
+  }
+
   onResize() {
-    this.isMobile = window.innerWidth <= 768;
+    this.isMobile = window.innerWidth < 1024;
+    this.menuOpened = !this.isMobile;
   }
 }

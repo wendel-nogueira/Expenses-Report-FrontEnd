@@ -1,100 +1,46 @@
-<div class="flex flex-col gap-8 mt-20">
-  <div>
-    <h2 class="text-2xl text-center text-slate-900 mb-2">create new user</h2>
-    <p class="text-center font-light text-slate-500">
-      use the form below to create a new user
-    </p>
-  </div>
-
-  <div
-    class="flex flex-col gap-6 items-center py-16 px-0 bg-white rounded-md mx-auto shadow-md"
-  >
-    <form class="w-4/5 flex flex-col gap-5">
-      <mat-form-field class="w-full">
-        <mat-label>Email</mat-label>
-        <input
-          type="email"
-          matInput
-          [formControl]="emailFormControl"
-          [errorStateMatcher]="matcher"
-          placeholder="Ex. jhon_doe@email.com"
-          minlength="2"
-          maxlength="50"
-          name="email"
-          (change)="onEmailChange()"
+<div class="flex flex-col items-center gap-8">
+  <app-header
+    [title]="'create new user'"
+    [subtitle]="'use the form below to create a new user'"
+  />
+  <app-content class="w-full">
+    <app-form class="w-full">
+      <app-form-group class="w-full">
+        <app-input-email
+          [value]="email"
+          [label]="'Email'"
+          [emailExists]="emailExists"
+          (changeValue)="emailChangeValue($event)"
+          (isInvalid)="emailIsInvalidChangeValue($event)"
+          class="w-full"
         />
-        <mat-error
-          *ngIf="
-            !emailFormControl.hasError('pattern') &&
-            !emailFormControl.hasError('email') &&
-            !emailFormControl.hasError('required') &&
-            !emailFormControl.hasError('minlength') &&
-            !emailFormControl.hasError('maxlength')
-          "
-          class="font-normal text-xs mt-1"
-        >
-          Email already exists
-        </mat-error>
-        <mat-error
-          *ngIf="emailFormControl.hasError('pattern')"
-          class="font-normal text-xs mt-1"
-        >
-          Please enter a valid email address
-        </mat-error>
-        <mat-error
-          *ngIf="
-            emailFormControl.hasError('minlength') ||
-            emailFormControl.hasError('maxlength')
-          "
-          class="font-normal text-xs mt-1"
-        >
-          Email must be between <strong class="font-bold">2</strong> and
-          <strong class="font-bold">50</strong> characters
-        </mat-error>
-        <mat-error
-          *ngIf="emailFormControl.hasError('required')"
-          class="font-normal text-xs mt-1"
-        >
-          Email is <strong class="font-bold">required</strong>
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field class="w-full" *ngIf="isAccountant">
-        <mat-label>Role</mat-label>
-        <mat-select
-          [formControl]="rolesFormControl"
-          [errorStateMatcher]="matcher"
-        >
-          <mat-option *ngFor="let role of roles" [value]="role.enumId">
-            {{ role.name }}
-          </mat-option>
-        </mat-select>
-        <mat-error
-          *ngIf="rolesFormControl.hasError('required')"
-          class="font-normal text-xs mt-1"
-          >Role is <strong class="font-bold">required</strong></mat-error
-        >
-      </mat-form-field>
-
-      <div class="flex items-center justify-center gap-8">
-        <button
-          mat-flat-button
-          class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 bg-green-400 hover:bg-green-500 mat-elevation-z2"
-          type="submit"
-          (click)="onSubmit()"
-        >
-          <mat-icon svgIcon="add" class="text-white"></mat-icon>
-          <span class="ml-2">create</span>
-        </button>
-        <a [routerLink]="['/users']">
-          <button
-            mat-flat-button
-            class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 bg-red-400 hover:bg-red-500 mat-elevation-z2"
-          >
-            <mat-icon svgIcon="cancel" class="text-white"></mat-icon>
-            <span class="ml-2"> cancel </span>
-          </button>
-        </a>
-      </div>
-    </form>
-  </div>
+      </app-form-group>
+      <app-form-group class="w-full">
+        <app-select
+          *ngIf="isAccountant"
+          [label]="'Role'"
+          [options]="roles"
+          (changeValue)="roleChangeValue($event)"
+          (isInvalid)="roleIsInvalidChangeValue($event)"
+          class="w-full"
+        />
+      </app-form-group>
+      <app-button-group class="w-full">
+        <app-flat-button
+          [label]="'create'"
+          [icon]="'add'"
+          [type]="'success'"
+          (clickButton)="onSubmit()"
+          class="w-full"
+        ></app-flat-button>
+        <app-redirect-button
+          [label]="'cancel'"
+          [icon]="'cancel'"
+          [type]="'danger'"
+          [path]="'/users'"
+          class="w-full"
+        ></app-redirect-button>
+      </app-button-group>
+    </app-form>
+  </app-content>
 </div>

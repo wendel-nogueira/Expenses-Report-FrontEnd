@@ -15,20 +15,10 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@handson/input-search": [
-        "libs/ui/forms/input-search/input-search.component.ts"
-      ],
-      "@handson/table": ["libs/ui/data-table/table/table.component.ts"],
       "change-password": ["libs/ui/change-password/src/index.ts"],
       "departaments": ["libs/ui/departaments/src/index.ts"],
       "footer": ["libs/ui/master-page/src/lib/footer/src/index.ts"],
       "header": ["libs/ui/master-page/src/lib/header/src/index.ts"],
-      "header-mobile": [
-        "libs/ui/master-page/src/lib/header-mobile/src/index.ts"
-      ],
-      "informations": [
-        "libs/ui/profile/src/lib/profile/informations/src/index.ts"
-      ],
       "login": ["libs/ui/login/src/index.ts"],
       "master-page": ["libs/ui/master-page/src/index.ts"],
       "profile": ["libs/ui/profile/src/index.ts"],

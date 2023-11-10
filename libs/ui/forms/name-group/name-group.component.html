@@ -1,0 +1,26 @@
+<div class="w-full">
+  <app-form-group>
+    <app-input-text
+      [value]="userToUpdate!.name.firstName"
+      [label]="'First Name'"
+      [name]="'firstName'"
+      [placeholder]="'Ex. Jhon'"
+      [minLength]="2"
+      [maxLength]="50"
+      (changeValue)="userToUpdate!.name.firstName = $event"
+      (isInvalid)="firstNameIsInvalid = $event"
+      class="w-full"
+    />
+    <app-input-text
+      [value]="userToUpdate!.name.lastName"
+      [label]="'Last Name'"
+      [name]="'lastName'"
+      [placeholder]="'Ex. Doe'"
+      [minLength]="2"
+      [maxLength]="50"
+      (changeValue)="userToUpdate!.name.lastName = $event"
+      (isInvalid)="lastNameIsInvalid = $event"
+      class="w-full"
+    />
+  </app-form-group>
+</div>

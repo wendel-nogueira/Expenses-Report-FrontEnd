@@ -1,10 +1,8 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
 import {
   TableComponent,
   tableColumns,
@@ -14,6 +12,7 @@ import { Identity } from '../../../../../../models/Identity';
 import { IdentityService } from '../../../../../../services/identity/identity.service';
 import { UserService } from '../../../../../../services/user/user.service';
 import { AuthService } from '../../../../../../services/auth/auth.service';
+import { RedirectButtonComponent } from '../../../../../buttons/redirect-button/redirect-button.component';
 
 @Component({
   selector: 'lib-users-list',
@@ -25,9 +24,9 @@ import { AuthService } from '../../../../../../services/auth/auth.service';
     MatTableModule,
     MatPaginatorModule,
     MatIconModule,
-    RouterModule,
     InputSearchComponent,
     TableComponent,
+    RedirectButtonComponent,
   ],
 })
 export class UsersListComponent implements OnInit {
@@ -67,7 +66,7 @@ export class UsersListComponent implements OnInit {
     this.isAccountant = role === 'Accountant';
     this.isManager = role === 'Manager';
 
-    if (!this.isAccountant && !this.isManager) this.columns.pop();
+    if (!this.isAccountant) this.columns.pop();
 
     this.getIdentities();
   }
@@ -82,6 +81,7 @@ export class UsersListComponent implements OnInit {
       this.userService.getUsers().subscribe((users) => {
         identities.forEach((identity) => {
           if (identity.id === userIdentity) return;
+          if (!this.isAccountant && identity.roleName === 'Accountant') return;
 
           users.forEach((user) => {
             if (user.identityId === identity.id) {
@@ -94,7 +94,7 @@ export class UsersListComponent implements OnInit {
                 active: identity.isDeleted ? 'No' : 'Yes',
                 actions: {
                   href: `/users/edit/${identity.id}`,
-                  icon: 'edit',
+                  icon: this.isManager ? 'eye' : 'edit',
                   style: 'bg-blue-400 hover:bg-blue-500',
                 },
               };
@@ -133,6 +133,10 @@ export class UsersListComponent implements OnInit {
     else this.data = new MatTableDataSource<rows>(this.rowsFiltered);
 
     this.loading = false;
+  }
+
+  checkIsRelated(userId: string) {
+
   }
 }
 

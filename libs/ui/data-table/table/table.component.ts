@@ -40,6 +40,8 @@ export class TableComponent implements AfterViewInit, OnInit, OnChanges {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  windowSize = window.innerWidth;
+
   constructor() {
     this.ariaLabel = '';
     this.tableColumns = [];
@@ -61,6 +63,10 @@ export class TableComponent implements AfterViewInit, OnInit, OnChanges {
     if (changes['dataSource']) {
       this.dataSource.paginator = this.paginator;
     }
+  }
+
+  onResize(): void {
+    this.windowSize = window.innerWidth;
   }
 }
 

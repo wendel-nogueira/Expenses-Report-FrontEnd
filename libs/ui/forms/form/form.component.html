@@ -1,0 +1,10 @@
+<form class="w-full flex flex-col gap-5" *ngIf="!loading">
+  <ng-content></ng-content>
+</form>
+<div class="flex flex-col items-center justify-center" *ngIf="loading">
+  <mat-spinner
+    class="w-16 h-16 text-center mx-auto"
+    [diameter]="60"
+    [strokeWidth]="5"
+  ></mat-spinner>
+</div>

@@ -1,27 +1,30 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   ActivatedRoute,
   ParamMap,
   Router,
   RouterModule,
 } from '@angular/router';
-import {
-  FormControl,
-  Validators,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DepartamentService } from '../../../../../../services/departament/departament.service';
 import { UserService } from '../../../../../../services/user/user.service';
 import { Departament } from '../../../../../../models/Departament';
 import { User } from '../../../../../../models/User';
-import { MatSelectModule } from '@angular/material/select';
+import { RedirectButtonComponent } from 'libs/ui/buttons/redirect-button/redirect-button.component';
+import { FlatButtonComponent } from 'libs/ui/buttons/flat-button/flat-button.component';
+import { FormGroupComponent } from 'libs/ui/forms/form-group/form-group.component';
+import { FormComponent } from 'libs/ui/forms/form/form.component';
+import { HeaderComponent } from 'libs/ui/page/header/header.component';
+import { ContentComponent } from 'libs/ui/page/content/content.component';
+import { InputTextComponent } from 'libs/ui/forms/input-text/input-text.component';
+import { TextFieldComponent } from 'libs/ui/forms/text-field/text-field.component';
+import { ButtonGroupComponent } from 'libs/ui/buttons/button-group/button-group.component';
+import {
+  SelectMultipleComponent,
+  SelectMultipleOption,
+} from 'libs/ui/forms/select-multiple/select-multiple.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'lib-departament-edit',
@@ -31,55 +34,43 @@ import { MatSelectModule } from '@angular/material/select';
   imports: [
     CommonModule,
     RouterModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    NgIf,
+    HeaderComponent,
+    ContentComponent,
+    InputTextComponent,
+    FormGroupComponent,
+    FlatButtonComponent,
+    RedirectButtonComponent,
+    ButtonGroupComponent,
+    TextFieldComponent,
+    SelectMultipleComponent,
+    FormComponent,
+    MatSnackBarModule,
   ],
 })
 export class DepartamentEditComponent implements OnInit {
   id: string | null = null;
   departament: Departament | null = null;
-  allUsers: User[] = [];
+  allUsers: SelectMultipleOption[] = [];
   managers: string[] = [];
-  managersToUpdate: string[] = [];
   users: string[] = [];
-  usersToUpdate: string[] = [];
   loading = true;
   currentUrl = this.router.url;
+
+  nameIsInvalid = false;
+  acronymExists = false;
+  acronymIsInvalid = false;
+
+  name = '';
+  acronym = '';
+  description = '';
 
   constructor(
     private departamentService: DepartamentService,
     private userService: UserService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private matSnackBar: MatSnackBar
   ) {}
-
-  nameFormControl = new FormControl('', [
-    Validators.required,
-    Validators.minLength(2),
-    Validators.maxLength(50),
-  ]);
-  acronymFormControl = new FormControl('', [
-    Validators.required,
-    Validators.minLength(2),
-    Validators.maxLength(10),
-  ]);
-  descriptionFormControl = new FormControl('', []);
-  matcher = new ErrorStateMatcher();
-
-  fields = [
-    this.nameFormControl,
-    this.acronymFormControl,
-    this.descriptionFormControl,
-  ];
-
-  managersFormControl = new FormControl<string[] | null>([]);
-  usersFormControl = new FormControl<string[] | null>([]);
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params: ParamMap) => {
@@ -96,9 +87,10 @@ export class DepartamentEditComponent implements OnInit {
       .getDepartamentById(this.id as string)
       .subscribe((departament) => {
         this.departament = departament;
-        this.nameFormControl.setValue(departament.name);
-        this.acronymFormControl.setValue(departament.acronym);
-        this.descriptionFormControl.setValue(departament.description);
+
+        this.name = this.departament.name;
+        this.acronym = this.departament.acronym;
+        this.description = this.departament.description;
 
         this.getUsers();
       });
@@ -109,8 +101,6 @@ export class DepartamentEditComponent implements OnInit {
       .getDepartamentManagers(this.id as string)
       .subscribe((managers) => {
         this.managers = managers.managersId;
-
-        this.managersFormControl.setValue(this.managers);
       });
   }
 
@@ -119,14 +109,21 @@ export class DepartamentEditComponent implements OnInit {
       .getDepartamentUsers(this.id as string)
       .subscribe((users) => {
         this.users = users.usersId;
-
-        this.usersFormControl.setValue(this.users);
       });
   }
 
   getUsers() {
     this.userService.getUsers().subscribe((users) => {
-      this.allUsers = users;
+      const allUsers: SelectMultipleOption[] = [];
+
+      users.forEach((user: User) => {
+        allUsers.push({
+          value: user.id as string,
+          viewValue: `${user.name.firstName} ${user.name.lastName}`,
+        });
+      });
+
+      this.allUsers = allUsers;
 
       this.getDepartamentManagers();
       this.getDepartamentUsers();
@@ -135,47 +132,65 @@ export class DepartamentEditComponent implements OnInit {
     });
   }
 
-  onAcronymChange() {
-    if (this.acronymFormControl.invalid) return;
+  acronymChangeValue(acronym: string) {
+    if (!acronym || this.acronymIsInvalid || !this.departament) return;
 
-    const acronym = this.acronymFormControl.value as string;
+    if (this.departament) this.departament.acronym = acronym;
 
     this.departamentService.checkAcronymExists(acronym).subscribe((exists) => {
-      if (exists && this.departament?.acronym !== acronym) {
-        this.acronymFormControl.setErrors({ invalid: true });
+      if (exists && exists.id !== this.departament?.id) {
+        this.acronymExists = true;
       }
     });
   }
 
   onSubmit() {
-    if (this.id === null) return;
-    if (this.fields.some((field) => field.invalid)) return;
+    if (
+      this.id === null ||
+      !this.departament ||
+      this.nameIsInvalid ||
+      this.acronymIsInvalid
+    ) {
+      this.matSnackBar.open(
+        'Invalid fields! Check that the fields have been filled in correctly.',
+        '',
+        {
+          duration: 4000,
+          panelClass: ['red-snackbar'],
+        }
+      );
 
-    const departament: Departament = {
-      id: this.id,
-      name: this.nameFormControl.value as string,
-      acronym: this.acronymFormControl.value as string,
-      description: this.descriptionFormControl.value as string,
-    };
+      return;
+    }
 
-    this.departamentService.updateDepartament(departament).subscribe(() => {
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-        this.router.navigate([this.currentUrl]);
+    this.departament.name = this.name;
+    this.departament.description = this.description;
+
+    this.departamentService
+      .updateDepartament(this.departament)
+      .subscribe(() => {
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(
+          () => {
+            this.matSnackBar.open('Departament updated successfully!', '', {
+              duration: 4000,
+              panelClass: ['green-snackbar'],
+            });
+
+            this.router.navigate([this.currentUrl]);
+          },
+          () => {
+            this.matSnackBar.open('Error updating departament!', '', {
+              duration: 4000,
+              panelClass: ['red-snackbar'],
+            });
+          }
+        );
       });
-    });
   }
 
-  onDeactivate() {
-    if (this.id === null) return;
+  onActivate(event: Event) {
+    event.preventDefault();
 
-    this.departamentService.deleteDepartament(this.id).subscribe(() => {
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-        this.router.navigate([this.currentUrl]);
-      });
-    });
-  }
-
-  onActivate() {
     if (this.id === null) return;
 
     this.departamentService.activateDepartament(this.id).subscribe(() => {
@@ -185,15 +200,24 @@ export class DepartamentEditComponent implements OnInit {
     });
   }
 
-  onChangeManagers() {
-    const managersToUpdate = this.managersFormControl.value as string[];
+  onDeactivate(event: Event) {
+    event.preventDefault();
 
-    const managersToAdd = managersToUpdate.filter(
-      (manager) => !this.departament?.managers?.includes(manager)
+    if (this.id === null) return;
+
+    this.departamentService.deactivateDepartament(this.id).subscribe(() => {
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate([this.currentUrl]);
+      });
+    });
+  }
+
+  changeManagersValue(managers: string[]) {
+    const managersToAdd = managers.filter(
+      (manager) => !this.managers.includes(manager)
     );
-
-    const managersToRemove = this.managers?.filter(
-      (manager) => !managersToUpdate.includes(manager)
+    const managersToRemove = this.managers.filter(
+      (manager) => !managers.includes(manager)
     );
 
     if (managersToAdd[0] !== undefined) {
@@ -217,16 +241,9 @@ export class DepartamentEditComponent implements OnInit {
     }
   }
 
-  onChangeUsers() {
-    const usersToUpdate = this.usersFormControl.value as string[];
-
-    const usersToAdd = usersToUpdate.filter(
-      (user) => !this.departament?.users?.includes(user)
-    );
-
-    const usersToRemove = this.users?.filter(
-      (user) => !usersToUpdate.includes(user)
-    );
+  changeUsersValue(users: string[]) {
+    const usersToAdd = users.filter((user) => !this.users.includes(user));
+    const usersToRemove = this.users.filter((user) => !users.includes(user));
 
     if (usersToAdd[0] !== undefined) {
       this.departamentService

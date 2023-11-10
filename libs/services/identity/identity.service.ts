@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpClient,
-  HttpErrorResponse,
-} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { EMPTY, Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
 import { Identity } from '../../models/Identity';
@@ -35,8 +32,8 @@ export class IdentityService {
       .pipe(retry(2), catchError(this.handleError));
   }
 
-  checkEmailExists(email: string): Observable<boolean> {
-    return this.httpClient.get<boolean>(`${this.apiURL}/email/${email}`).pipe(
+  checkEmailExists(email: string): Observable<Identity> {
+    return this.httpClient.get<Identity>(`${this.apiURL}/email/${email}`).pipe(
       catchError(() => {
         return EMPTY;
       })
@@ -57,31 +54,36 @@ export class IdentityService {
     const body = {
       role: roleEnumId,
     };
-
+    
     return this.httpClient
-      .put<Identity>(`${this.apiURL}/${id}/role`, JSON.stringify(body))
+      .put<Identity>(`${this.apiURL}/${id}/role`, body)
       .pipe(retry(2), catchError(this.handleError));
   }
 
-  activateIdentity(id: string): Observable<Identity> {
+  activateIdentity(id: string): Observable<void> {
     return this.httpClient
-      .put<Identity>(`${this.apiURL}/${id}/deleted`, null)
+      .patch<void>(`${this.apiURL}/${id}/activate`, null)
       .pipe(retry(2), catchError(this.handleError));
   }
 
-  deleteIdentity(id: string): Observable<Identity> {
+  deactivateIdentity(id: string): Observable<void> {
     return this.httpClient
-      .delete<Identity>(`${this.apiURL}/${id}`)
+      .delete<void>(`${this.apiURL}/${id}/deactivate`)
       .pipe(retry(2), catchError(this.handleError));
   }
 
   handleError(error: HttpErrorResponse) {
-    let errorMessage = '';
+    const errorMessage = {
+      code: error.status,
+      message: '',
+      errors: [],
+    };
 
     if (error.error instanceof ErrorEvent) {
-      errorMessage = error.error.message;
+      errorMessage.message = error.error.message;
     } else {
-      errorMessage = `Error Code : ${error.status}\nMessage : ${error.message}`;
+      errorMessage.message = error.message;
+      errorMessage.errors = error.error.errors;
     }
 
     return throwError(errorMessage);
