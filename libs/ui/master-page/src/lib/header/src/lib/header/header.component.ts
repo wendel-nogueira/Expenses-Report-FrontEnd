@@ -1,5 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -22,10 +23,10 @@ import { IconComponent } from './icon/icon.component';
     IconComponent,
   ],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnChanges {
+  @Input() isMobile = false;
   @Output() menuChange = new EventEmitter();
 
-  isMobile = false;
   collapsed = true;
 
   showUserMenu = false;
@@ -41,9 +42,7 @@ export class HeaderComponent implements OnInit {
   role = '';
   email = '';
 
-  constructor(private authService: AuthService) {
-    this.onResize();
-  }
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     this.role = this.authService.getIdentity()?.role as string;
@@ -97,6 +96,14 @@ export class HeaderComponent implements OnInit {
     ];
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['isMobile'] && changes['isMobile']['currentValue']) {
+      this.collapsed = false;
+    } else if (changes['isMobile'] && !changes['isMobile']['currentValue']) {
+      this.collapsed = true;
+    }
+  }
+
   toggleCollapsed(): void {
     if (this.isMobile) return;
     this.collapsed = !this.collapsed;
@@ -117,12 +124,12 @@ export class HeaderComponent implements OnInit {
     this.authService.logout();
   }
 
-  onResize() {
-    if (window.innerWidth < 1024) {
-      this.collapsed = false;
-      this.isMobile = true;
-    }
-  }
+  // onResize() {
+  //   if (window.innerWidth < 1024) {
+  //     this.collapsed = false;
+  //     this.isMobile = true;
+  //   }
+  // }
 
   onClick(subMenu: string) {
     this.subMenuOpened = subMenu;

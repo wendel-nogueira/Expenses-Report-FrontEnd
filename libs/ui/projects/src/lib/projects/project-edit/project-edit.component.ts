@@ -106,6 +106,8 @@ export class ProjectEditComponent implements OnInit {
       const allDepartaments: SelectOption[] = [];
 
       this.allDepartaments.forEach((departament) => {
+        if (departament.isDeleted) return;
+
         allDepartaments.push({
           value: departament.id as string,
           viewValue: departament.name,

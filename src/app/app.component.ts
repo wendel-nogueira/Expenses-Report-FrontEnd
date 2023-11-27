@@ -126,5 +126,17 @@ export class AppComponent {
         '../assets/x.svg'
       )
     );
+    this.matIconRegistry.addSvgIcon(
+      'github',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/github-logo.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'envelope',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/envelope.svg'
+      )
+    );
   }
 }

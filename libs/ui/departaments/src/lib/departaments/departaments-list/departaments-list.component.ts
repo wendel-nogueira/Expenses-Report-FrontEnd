@@ -10,7 +10,8 @@ import {
 } from '../../../../../data-table/table/table.component';
 import { InputSearchComponent } from '../../../../../forms/input-search/input-search.component';
 import { DepartamentService } from './../../../../../../services/departament/departament.service';
-
+import { AuthService } from '../../../../../../services/auth/auth.service';
+import { UserService } from '../../../../../../services/user/user.service';
 
 @Component({
   selector: 'lib-departaments-list',
@@ -41,8 +42,13 @@ export class DepartamentsListComponent implements OnInit {
 
   data: MatTableDataSource<rows>;
 
+  isAccountant = false;
+  userId = '';
+
   constructor(
     private departamentService: DepartamentService,
+    private authService: AuthService,
+    private userService: UserService
   ) {
     this.searchValue = '';
 
@@ -50,34 +56,70 @@ export class DepartamentsListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getDepartaments();
+    const id = this.authService.getIdentity()?.nameid as string;
+    const role = this.authService.getIdentity()?.role as string;
+
+    this.isAccountant = role === 'Accountant';
+
+    if (!this.isAccountant) this.columns.pop();
+
+    this.userService.getUserByIdentityId(id).subscribe((data) => {
+      this.userId = data.id as string;
+
+      this.getDepartaments();
+    });
   }
 
   getDepartaments() {
     this.loading = true;
 
-    this.departamentService.getDepartaments().subscribe((data) => {
-      this.rows = [];
-      this.rowsFiltered = [];
+    if (this.isAccountant) {
+      this.departamentService.getDepartaments().subscribe((data) => {
+        this.rows = [];
+        this.rowsFiltered = [];
 
-      data.forEach((departament) => {
-        this.rows.push({
-          id: departament.id,
-          name: departament.name,
-          acronym: departament.acronym,
-          active: departament.isDeleted ? 'No' : 'Yes',
-          actions: {
-            href: `/departaments/edit/${departament.id}`,
-            icon: 'edit',
-            style: 'bg-blue-400 hover:bg-blue-500',
-          },
+        data.forEach((departament) => {
+          this.rows.push({
+            id: departament.id,
+            name: departament.name,
+            acronym: departament.acronym,
+            active: departament.isDeleted ? 'No' : 'Yes',
+            actions: {
+              href: `/departaments/edit/${departament.id}`,
+              icon: 'edit',
+              style: 'bg-blue-400 hover:bg-blue-500',
+            },
+          });
         });
+
+        this.data = new MatTableDataSource<rows>(this.rows);
+
+        this.loading = false;
       });
+    } else {
+      this.departamentService.getDepartamentsRelated(this.userId).subscribe((data) => {
+        this.rows = [];
+        this.rowsFiltered = [];
 
-      this.data = new MatTableDataSource<rows>(this.rows);
+        data.forEach((departament) => {
+          this.rows.push({
+            id: departament.id,
+            name: departament.name,
+            acronym: departament.acronym,
+            active: departament.isDeleted ? 'No' : 'Yes',
+            actions: {
+              href: `/departaments/edit/${departament.id}`,
+              icon: 'edit',
+              style: 'bg-blue-400 hover:bg-blue-500',
+            },
+          });
+        });
 
-      this.loading = false;
-    });
+        this.data = new MatTableDataSource<rows>(this.rows);
+
+        this.loading = false;
+      });
+    }
   }
 
   onChangeValue(value: string) {
