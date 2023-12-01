@@ -188,9 +188,7 @@ export class DepartamentEditComponent implements OnInit {
       });
   }
 
-  onActivate(event: Event) {
-    event.preventDefault();
-
+  onActivate() {
     if (this.id === null) return;
 
     this.departamentService.activateDepartament(this.id).subscribe(() => {
@@ -200,9 +198,7 @@ export class DepartamentEditComponent implements OnInit {
     });
   }
 
-  onDeactivate(event: Event) {
-    event.preventDefault();
-
+  onDeactivate() {
     if (this.id === null) return;
 
     this.departamentService.deactivateDepartament(this.id).subscribe(() => {

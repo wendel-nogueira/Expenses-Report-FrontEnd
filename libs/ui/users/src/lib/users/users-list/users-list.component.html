@@ -1,5 +1,5 @@
-<div class="flex flex-col gap-4 mt-20 w-full">
-  <div class="w-full flex flex-row items-center justify-between gap-2 lg:px-10">
+<div class="flex flex-col gap-4 mt-20">
+  <div class="w-full flex flex-row items-center justify-between gap-2 px-10">
     <app-redirect-button
       [label]="'new'"
       [icon]="'add'"
@@ -12,7 +12,7 @@
       ></app-input-search>
     </div>
   </div>
-  <div class="lg:px-5 w-full">
+  <div class="w-full px-5">
     <app-table
       [loading]="loading && loadingIdentities && loadingUsers"
       [tableColumns]="columns"

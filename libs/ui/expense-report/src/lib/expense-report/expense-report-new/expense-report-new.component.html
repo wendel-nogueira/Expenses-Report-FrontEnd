@@ -1,0 +1,104 @@
+<div class="flex flex-col items-center gap-8">
+  <app-header
+    [title]="'create new expense report'"
+    [subtitle]="'use the form below to create a new expense report'"
+  />
+  <app-content class="w-full">
+    <app-form class="w-full">
+      <app-form-group class="w-full">
+        <app-select
+          [label]="'Departament'"
+          [options]="departaments"
+          (changeValue)="departamentChangeValue($event)"
+          (isInvalid)="departamentIsInvalid = $event"
+          class="w-full"
+        />
+        <app-select
+          [label]="'Project'"
+          [options]="projects"
+          (changeValue)="project = $event"
+          (isInvalid)="projectIsInvalid = $event"
+          class="w-full"
+        />
+      </app-form-group>
+      <div
+        class="w-full h-fit flex flex-col gap-4 p-2 rounded-md bg-gray-100 border border-gray-200"
+      >
+        <p class="text-lg font-bold text-gray-700 text-center">Expenses</p>
+        <p class="text-sm font-bold text-gray-700 text-center">
+          Total:
+          <span class="text-green-500">${{ totalAmount.toFixed(2) }}</span>
+        </p>
+
+        <div class="w-full h-full flex flex-col gap-3">
+          <div class="w-full h-12 bg-white rounded shadow-md">
+            <div
+              class="w-full h-full flex flex-row justify-between items-center"
+            >
+              <p class="text-sm font-bold text-gray-700 ml-4">
+                Insert new expense
+              </p>
+
+              <button
+                mat-flat-button
+                class="w-12 h-12 flex flex-row justify-center items-center rounded cursor-pointer bg-blue-500 hover:bg-blue-600 transition-colors"
+                (click)="onAddExpense($event)"
+              >
+                <mat-icon class="text-white">add</mat-icon>
+              </button>
+            </div>
+          </div>
+          <div id="expenses" class="w-full h-96 overflow-y-auto">
+            <mat-expansion-panel
+              *ngFor="let expense of expenses"
+              class="w-full h-fit bg-gray-100 rounded shadow-md pb-3"
+            >
+              <mat-expansion-panel-header class="w-full bg-white">
+                <mat-panel-title>
+                  <p class="text-sm font-bold text-yellow-500 text-center">
+                    ${{ expense.amount.toFixed(2) }}
+                  </p>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="w-full h-full flex flex-col gap-2">
+                <p class="text-sm font-bold text-gray-700">
+                  Amount:
+                  <span class="text-gray-500 font-medium"
+                    >${{ expense.amount.toFixed(2) }}</span
+                  >
+                </p>
+                <p class="text-sm font-bold text-gray-700">
+                  Date Incurred:
+                  <span class="text-gray-500 font-medium">{{
+                    expense.dateIncurred
+                  }}</span>
+                </p>
+                <p class="text-sm font-bold text-gray-700">
+                  Explanation:
+                  <span class="text-gray-500 font-medium">{{
+                    expense.explanation
+                  }}</span>
+                </p>
+                <p
+                  class="text-sm font-bold text-red-700 cursor-pointer mt-2"
+                  onClick="onRemoveExpense(expense)"
+                >
+                  Remove
+                </p>
+              </div>
+            </mat-expansion-panel>
+          </div>
+        </div>
+      </div>
+      <app-button-group class="w-full">
+        <app-flat-button
+          [label]="'create'"
+          [icon]="'add'"
+          [type]="'success'"
+          (clickButton)="onSubmit()"
+          class="w-full"
+        ></app-flat-button>
+      </app-button-group>
+    </app-form>
+  </app-content>
+</div>
