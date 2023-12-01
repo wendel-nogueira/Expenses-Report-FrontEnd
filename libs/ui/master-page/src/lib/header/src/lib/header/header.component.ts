@@ -1,5 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -22,28 +23,30 @@ import { IconComponent } from './icon/icon.component';
     IconComponent,
   ],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnChanges {
+  @Input() isMobile = false;
   @Output() menuChange = new EventEmitter();
 
-  isMobile = false;
   collapsed = true;
 
   showUserMenu = false;
   showDepartamentMenu = false;
   showProjectMenu = false;
+  showExpenseAccountMenu = false;
+  showExpenseReportMenu = false;
 
   subMenuOpened = '';
 
   userMenuItems: Items[] = [];
   departamentMenuItems: Items[] = [];
   projectMenuItems: Items[] = [];
+  expenseAccountMenuItems: Items[] = [];
+  expenseReportMenuItems: Items[] = [];
 
   role = '';
   email = '';
 
-  constructor(private authService: AuthService) {
-    this.onResize();
-  }
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     this.role = this.authService.getIdentity()?.role as string;
@@ -56,6 +59,8 @@ export class HeaderComponent implements OnInit {
     this.showDepartamentMenu =
       this.role === 'Accountant' || this.role === 'Manager';
     this.showProjectMenu = true;
+    this.showExpenseAccountMenu = this.role === 'Accountant';
+    this.showExpenseReportMenu = true;
 
     this.userMenuItems = [
       {
@@ -95,6 +100,40 @@ export class HeaderComponent implements OnInit {
         show: true,
       },
     ];
+
+    this.expenseAccountMenuItems = [
+      {
+        text: 'new',
+        link: '/expense-accounts/new',
+        show: this.role === 'Accountant',
+      },
+      {
+        text: 'list',
+        link: '/expense-accounts',
+        show: this.role === 'Accountant',
+      },
+    ];
+
+    this.expenseReportMenuItems = [
+      {
+        text: 'new',
+        link: '/expense-reports/new',
+        show: true,
+      },
+      {
+        text: 'list',
+        link: '/expense-reports',
+        show: true,
+      },
+    ];
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['isMobile'] && changes['isMobile']['currentValue']) {
+      this.collapsed = false;
+    } else if (changes['isMobile'] && !changes['isMobile']['currentValue']) {
+      this.collapsed = true;
+    }
   }
 
   toggleCollapsed(): void {
@@ -117,12 +156,12 @@ export class HeaderComponent implements OnInit {
     this.authService.logout();
   }
 
-  onResize() {
-    if (window.innerWidth < 1024) {
-      this.collapsed = false;
-      this.isMobile = true;
-    }
-  }
+  // onResize() {
+  //   if (window.innerWidth < 1024) {
+  //     this.collapsed = false;
+  //     this.isMobile = true;
+  //   }
+  // }
 
   onClick(subMenu: string) {
     this.subMenuOpened = subMenu;

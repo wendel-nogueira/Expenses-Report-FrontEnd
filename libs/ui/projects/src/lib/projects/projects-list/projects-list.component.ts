@@ -12,6 +12,8 @@ import {
 import { ProjectService } from './../../../../../../services/project/project.service';
 import { DepartamentService } from './../../../../../../services/departament/departament.service';
 import { AuthService } from '../../../../../../services/auth/auth.service';
+import { Departament } from '../../../../../../models/Departament';
+import { UserService } from '../../../../../../services/user/user.service';
 
 @Component({
   selector: 'lib-projects-list',
@@ -44,11 +46,15 @@ export class ProjectsListComponent implements OnInit {
   data: MatTableDataSource<rows>;
 
   isAccountant = false;
+  isManager = false;
+  userId = '';
+  departaments: Departament[] = [];
 
   constructor(
     private projectService: ProjectService,
     private departamentService: DepartamentService,
-    private authService: AuthService
+    private authService: AuthService,
+    private userService: UserService
   ) {
     this.searchValue = '';
 
@@ -56,13 +62,25 @@ export class ProjectsListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const id = this.authService.getIdentity()?.nameid as string;
     const role = this.authService.getIdentity()?.role;
 
     this.isAccountant = role === 'Accountant';
 
     if (!this.isAccountant) this.columns.pop();
 
-    this.getProjects();
+    if (!this.isAccountant) {
+      this.userService.getUserByIdentityId(id).subscribe((data) => {
+        this.userId = data.id as string;
+
+        this.departamentService.getDepartamentsRelated(this.userId).subscribe((data) => {
+          this.departaments = data;
+          this.getProjects();
+        });
+      });
+    } else {
+      this.getProjects();
+    }
   }
 
   getProjects() {
@@ -73,6 +91,11 @@ export class ProjectsListComponent implements OnInit {
 
       this.departamentService.getDepartaments().subscribe((dataDepartament) => {
         data.forEach((element) => {
+          if (!this.isAccountant) {
+            if (!this.departaments.find((departament) => departament.id === element.departamentId))
+              return;
+          }
+
           this.rows.push({
             id: element.id,
             name: element.name,

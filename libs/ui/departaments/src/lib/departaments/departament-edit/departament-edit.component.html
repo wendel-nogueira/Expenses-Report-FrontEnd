@@ -67,13 +67,12 @@
           [path]="'/departaments'"
           class="w-full"
         ></app-redirect-button>
-
         <app-flat-button
           *ngIf="departament && departament.isDeleted"
           [label]="'activate'"
           [icon]="'check'"
           [type]="'success'"
-          (clickButton)="onActivate($event)"
+          (clickButton)="onActivate()"
           class="w-full"
         ></app-flat-button>
         <app-flat-button
@@ -81,7 +80,7 @@
           [label]="'deactivate'"
           [icon]="'trash'"
           [type]="'warning'"
-          (clickButton)="onDeactivate($event)"
+          (clickButton)="onDeactivate()"
           class="w-full"
         ></app-flat-button>
       </app-button-group>

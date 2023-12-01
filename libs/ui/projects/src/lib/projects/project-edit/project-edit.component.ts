@@ -106,6 +106,8 @@ export class ProjectEditComponent implements OnInit {
       const allDepartaments: SelectOption[] = [];
 
       this.allDepartaments.forEach((departament) => {
+        if (departament.isDeleted) return;
+
         allDepartaments.push({
           value: departament.id as string,
           viewValue: departament.name,
@@ -172,9 +174,7 @@ export class ProjectEditComponent implements OnInit {
       );
   }
 
-  onDeactivate(event: Event) {
-    event.preventDefault();
-
+  onDeactivate() {
     if (!this.id) return;
 
     this.projectService.deactivateProject(this.id).subscribe(() => {
@@ -184,9 +184,7 @@ export class ProjectEditComponent implements OnInit {
     });
   }
 
-  onActivate(event: Event) {
-    event.preventDefault();
-
+  onActivate() {
     if (!this.id) return;
 
     this.projectService.activateProject(this.id).subscribe(() => {

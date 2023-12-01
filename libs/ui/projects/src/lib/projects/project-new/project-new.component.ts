@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
@@ -83,6 +84,8 @@ export class ProjectNewComponent implements OnInit {
         const allDepartaments: SelectOption[] = [];
 
         this.allDepartaments.forEach((departament) => {
+          if (departament.isDeleted) return;
+
           allDepartaments.push({
             value: departament.id as string,
             viewValue: departament.name,
@@ -101,6 +104,20 @@ export class ProjectNewComponent implements OnInit {
           .getDepartamentsRelated(user.id as string)
           .subscribe((departaments) => {
             this.allDepartaments = departaments;
+            console.log(departaments);
+
+            const allDepartaments: SelectOption[] = [];
+
+            this.allDepartaments.forEach((departament) => {
+              if (departament.isDeleted) return;
+
+              allDepartaments.push({
+                value: departament.id as string,
+                viewValue: departament.name,
+              });
+            });
+
+            this.departaments = allDepartaments;
           });
       });
     }

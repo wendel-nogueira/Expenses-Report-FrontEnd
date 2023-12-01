@@ -24,6 +24,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class MasterPageComponent {
   menuOpened = false;
   isMobile = false;
+  size = 0;
 
   constructor() {
     this.onResize();

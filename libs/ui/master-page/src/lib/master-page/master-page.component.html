@@ -1,8 +1,8 @@
 <mat-sidenav-container
-  class="min-h-screen bg-slate-50"
+  id="master-page"
+  class="min-h-screen {{ isMobile ? 'mobile' : ''}}"
   autosize
   (window:resize)="onResize()"
-  style="background-color: #f2f2f2"
 >
   <mat-sidenav
     [opened]="!isMobile || menuOpened"
@@ -12,10 +12,10 @@
     class="h-full min-w-fit max-w-max w-full mat-elevation-z8"
     style="border: none"
   >
-    <lib-header (menuChange)="menuOpened = !menuOpened"></lib-header>
+    <lib-header [isMobile]="isMobile" (menuChange)="menuOpened = !menuOpened"></lib-header>
   </mat-sidenav>
   <mat-sidenav-content
-    class="flex flex-col justify-between py-4 px-4 w-auto min-h-screen"
+    class="flex flex-col justify-between w-auto min-h-screen"
     style="display: flex"
   >
     <div
@@ -25,7 +25,7 @@
     >
       <mat-icon svgIcon="list"></mat-icon>
     </div>
-    <div>
+    <div class="pt-10">
       <router-outlet></router-outlet>
     </div>
     <lib-footer></lib-footer>
