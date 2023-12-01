@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@expense": ["libs/ui/expense/src/index.ts"],
+      "@expense-account": ["libs/ui/expense-account/src/index.ts"],
+      "@expense-report": ["libs/ui/expense-report/src/index.ts"],
       "change-password": ["libs/ui/change-password/src/index.ts"],
       "departaments": ["libs/ui/departaments/src/index.ts"],
       "footer": ["libs/ui/master-page/src/lib/footer/src/index.ts"],

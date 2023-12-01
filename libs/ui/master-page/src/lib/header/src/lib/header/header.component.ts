@@ -32,12 +32,16 @@ export class HeaderComponent implements OnInit, OnChanges {
   showUserMenu = false;
   showDepartamentMenu = false;
   showProjectMenu = false;
+  showExpenseAccountMenu = false;
+  showExpenseReportMenu = false;
 
   subMenuOpened = '';
 
   userMenuItems: Items[] = [];
   departamentMenuItems: Items[] = [];
   projectMenuItems: Items[] = [];
+  expenseAccountMenuItems: Items[] = [];
+  expenseReportMenuItems: Items[] = [];
 
   role = '';
   email = '';
@@ -55,6 +59,8 @@ export class HeaderComponent implements OnInit, OnChanges {
     this.showDepartamentMenu =
       this.role === 'Accountant' || this.role === 'Manager';
     this.showProjectMenu = true;
+    this.showExpenseAccountMenu = this.role === 'Accountant';
+    this.showExpenseReportMenu = true;
 
     this.userMenuItems = [
       {
@@ -91,6 +97,32 @@ export class HeaderComponent implements OnInit, OnChanges {
       {
         text: 'list',
         link: '/projects',
+        show: true,
+      },
+    ];
+
+    this.expenseAccountMenuItems = [
+      {
+        text: 'new',
+        link: '/expense-accounts/new',
+        show: this.role === 'Accountant',
+      },
+      {
+        text: 'list',
+        link: '/expense-accounts',
+        show: this.role === 'Accountant',
+      },
+    ];
+
+    this.expenseReportMenuItems = [
+      {
+        text: 'new',
+        link: '/expense-reports/new',
+        show: true,
+      },
+      {
+        text: 'list',
+        link: '/expense-reports',
         show: true,
       },
     ];

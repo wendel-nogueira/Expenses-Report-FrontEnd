@@ -138,5 +138,23 @@ export class AppComponent {
         '../assets/envelope.svg'
       )
     );
+    this.matIconRegistry.addSvgIcon(
+      'cardholder',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/cardholder.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'file',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/file.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'bank',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/bank.svg'
+      )
+    );
   }
 }

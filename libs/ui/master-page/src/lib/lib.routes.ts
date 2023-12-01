@@ -18,11 +18,22 @@ export const masterPageRoutes: Route[] = [
       },
       {
         path: 'departaments',
-        loadChildren: () => import('departaments').then((m) => m.departamentsRoutes),
+        loadChildren: () =>
+          import('departaments').then((m) => m.departamentsRoutes),
       },
       {
         path: 'projects',
         loadChildren: () => import('projects').then((m) => m.projectsRoutes),
+      },
+      {
+        path: 'expense-accounts',
+        loadChildren: () =>
+          import('@expense-account').then((m) => m.expenseAccountRoutes),
+      },
+      {
+        path: 'expense-reports',
+        loadChildren: () =>
+          import('@expense-report').then((m) => m.expenseReportRoutes),
       },
       {
         path: 'profile',

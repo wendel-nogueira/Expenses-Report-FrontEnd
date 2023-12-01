@@ -1,0 +1,81 @@
+<div class="flex flex-col items-center gap-8">
+  <app-header
+    [title]="'update expense account'"
+    [subtitle]="'use the form below to update a expense account'"
+  />
+  <app-content class="w-full">
+    <app-form class="w-full" [loading]="loading || !expenseAccount">
+      <app-form-group class="w-full">
+        <app-input-text
+          [value]="name"
+          [label]="'Name'"
+          (changeValue)="expenseAccount!.name = $event"
+          (isInvalid)="nameIsInvalid = $event"
+          class="w-full"
+        />
+      </app-form-group>
+      <app-form-group class="w-full">
+        <app-input-text
+          [value]="code"
+          [label]="'Code'"
+          [alreadyExists]="codeExists"
+          [minLength]="2"
+          [maxLength]="10"
+          (changeValue)="codeChangeValue($event)"
+          (isInvalid)="codeIsInvalid = $event"
+          class="w-full"
+        />
+      </app-form-group>
+      <app-form-group class="w-full">
+        <app-select
+          [label]="'Type'"
+          [options]="types"
+          [value]="type.toString()"
+          (changeValue)="typeChangeValue($event)"
+          (isInvalid)="typeIsInvalid = $event"
+          class="w-full"
+        />
+      </app-form-group>
+      <app-form-group class="w-full">
+        <app-text-field
+          [value]="description"
+          [label]="'Description'"
+          (changeValue)="expenseAccount!.description = $event"
+          class="w-full"
+        />
+      </app-form-group>
+      <app-button-group class="w-full">
+        <app-flat-button
+          [label]="'update'"
+          [icon]="'edit'"
+          [type]="'info'"
+          (clickButton)="onSubmit()"
+          class="w-full"
+        ></app-flat-button>
+        <app-redirect-button
+          [label]="'cancel'"
+          [icon]="'cancel'"
+          [type]="'danger'"
+          [path]="'/expense-accounts'"
+          class="w-full"
+        ></app-redirect-button>
+        <app-flat-button
+          *ngIf="expenseAccount && expenseAccount.isDeleted"
+          [label]="'activate'"
+          [icon]="'check'"
+          [type]="'success'"
+          (clickButton)="onActivate()"
+          class="w-full"
+        ></app-flat-button>
+        <app-flat-button
+          *ngIf="expenseAccount && !expenseAccount.isDeleted"
+          [label]="'deactivate'"
+          [icon]="'trash'"
+          [type]="'warning'"
+          (clickButton)="onDeactivate()"
+          class="w-full"
+        ></app-flat-button>
+      </app-button-group>
+    </app-form>
+  </app-content>
+</div>

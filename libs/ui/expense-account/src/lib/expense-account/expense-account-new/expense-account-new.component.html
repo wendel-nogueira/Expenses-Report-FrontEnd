@@ -1,0 +1,57 @@
+<div class="flex flex-col items-center gap-8">
+  <app-header
+    [title]="'create new expense account'"
+    [subtitle]="'use the form below to create a new expense account'"
+  />
+  <app-content class="w-full">
+    <app-form class="w-full">
+      <app-form-group class="w-full">
+        <app-input-text
+          [value]="name"
+          [label]="'Name'"
+          (changeValue)="name = $event"
+          (isInvalid)="nameIsInvalid = $event"
+          class="w-full"
+        />
+      </app-form-group>
+      <app-form-group class="w-full">
+        <app-input-text
+          [value]="code"
+          [label]="'Code'"
+          [alreadyExists]="codeExists"
+          [minLength]="2"
+          [maxLength]="10"
+          (changeValue)="codeChangeValue($event)"
+          (isInvalid)="codeIsInvalid = $event"
+          class="w-full"
+        />
+      </app-form-group>
+      <app-form-group class="w-full">
+        <app-select
+          [label]="'Type'"
+          [options]="types"
+          (changeValue)="type = $event"
+          (isInvalid)="typeIsInvalid = $event"
+          class="w-full"
+        />
+      </app-form-group>
+      <app-form-group class="w-full">
+        <app-text-field
+          [value]="description"
+          [label]="'Description'"
+          (changeValue)="description = $event"
+          class="w-full"
+        />
+      </app-form-group>
+      <app-button-group class="w-full">
+        <app-flat-button
+          [label]="'create'"
+          [icon]="'add'"
+          [type]="'success'"
+          (clickButton)="onSubmit()"
+          class="w-full"
+        ></app-flat-button>
+      </app-button-group>
+    </app-form>
+  </app-content>
+</div>
