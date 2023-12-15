@@ -1,1 +1,70 @@
-<p>expense-new works!</p>
+<div class="flex flex-col items-center gap-8">
+  <app-header
+    [title]="'create new expense'"
+    [subtitle]="'use the form below to create a new expense'"
+  />
+  <app-content class="w-full">
+    <app-form class="w-full">
+      <app-form-group class="w-full">
+        <app-select
+          [label]="'Expense Account'"
+          [options]="expenseAccounts"
+          (changeValue)="expense.expenseAccount = $event"
+          (isInvalid)="expenseAccountIsInvalid = $event"
+          class="w-full"
+        />
+      </app-form-group>
+      <app-form-group class="w-full">
+        <app-input-money
+          [value]="expense.amount.toString()"
+          [label]="'Amount'"
+          (changeValue)="amountChangeValue($event)"
+          (isInvalid)="amountIsInvalid = $event"
+          class="w-full"
+        />
+        <app-input-date
+          [value]="expense.dateIncurred"
+          [label]="'Date Incurred'"
+          (changeValue)="expense.dateIncurred = $event"
+          (isInvalid)="dateIncurredIsInvalid = $event"
+          class="w-full"
+        />
+      </app-form-group>
+      <app-form-group class="w-full">
+        <app-text-field
+          [value]="expense.explanation"
+          [label]="'Explanation'"
+          (changeValue)="expense.explanation = $event"
+          class="w-full"
+        />
+      </app-form-group>
+
+      <app-form-group class="w-full">
+        <app-input-file
+          [value]="expense.receipt!"
+          [label]="'Receipt'"
+          (changeValue)="expense.receipt = $event"
+          (isInvalid)="receiptIsInvalid = $event"
+          class="w-full"
+        />
+      </app-form-group>
+
+      <app-button-group class="w-full">
+        <app-flat-button
+          [label]="'create'"
+          [icon]="'add'"
+          [type]="'success'"
+          (clickButton)="onSubmit()"
+          class="w-full"
+        ></app-flat-button>
+        <app-flat-button
+          [label]="'cancel'"
+          [icon]="'cancel'"
+          [type]="'danger'"
+          (clickButton)="onCancel()"
+          class="w-full"
+        ></app-flat-button>
+      </app-button-group>
+    </app-form>
+  </app-content>
+</div>

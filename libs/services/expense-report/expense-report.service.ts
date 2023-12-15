@@ -19,6 +19,20 @@ export class ExpenseReportService {
       .pipe(retry(2), catchError(this.handleError));
   }
 
+  getExpenseReportById(id: string): Observable<ExpenseReport> {
+    return this.httpClient
+      .get<ExpenseReport>(this.apiURL + '/' + id)
+      .pipe(retry(2), catchError(this.handleError));
+  }
+
+  createExpenseReport(
+    expenseReport: ExpenseReport
+  ): Observable<ExpenseReport> {
+    return this.httpClient
+      .post<ExpenseReport>(this.apiURL, JSON.stringify(expenseReport))
+      .pipe(retry(2), catchError(this.handleError));
+  }
+
   handleError(error: HttpErrorResponse) {
     const errorMessage = {
       code: error.status,
