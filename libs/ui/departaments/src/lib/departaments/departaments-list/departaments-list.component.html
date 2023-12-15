@@ -1,12 +1,12 @@
-<div class="flex flex-col gap-4 mt-20 w-full">
-  <div class="w-full flex flex-row items-center justify-between gap-2 px-10">
+<div class="flex flex-col gap-4 mt-10 lg:mt-20">
+  <div class="w-full flex flex-row items-center justify-between gap-3 px-10">
     <a [routerLink]="['/departaments/new']" *ngIf="isAccountant">
       <button
         mat-flat-button
         class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 bg-green-400 hover:bg-green-500"
       >
         <mat-icon>add</mat-icon>
-        <span class="ml-2">new</span>
+        <span class="ml-2 hidden lg:flex">new</span>
       </button>
     </a>
     <div class="ml-auto">

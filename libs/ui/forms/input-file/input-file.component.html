@@ -1,0 +1,46 @@
+<div class="w-full flex items-center justify-center gap-4">
+  <label
+    for="file"
+    class="w-max flex items-center justify-center gap-3 cursor-pointer"
+  >
+    <p class="text-gray-600 text-base font-medium">{{ label }}:</p>
+
+    <div
+      class="w-max h-full px-3 py-2 transition-colors rounded shadow-md text-white flex items-center justify-center cursor-pointer {{
+        loading ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'
+      }}"
+    >
+      <mat-icon
+        svgIcon="upload"
+        class="text-white flex items-center justify-center"
+        *ngIf="!loading"
+      ></mat-icon>
+      <mat-spinner
+        *ngIf="loading"
+        diameter="20"
+        mode="indeterminate"
+        class="text-white"
+      ></mat-spinner>
+      <span class="ml-2">upload file</span>
+    </div>
+  </label>
+  <input
+    type="file"
+    id="file"
+    name="file"
+    class="opacity-0 absolute inset-0 -z-50"
+    (change)="onChangeValue($event)"
+    [disabled]="loading"
+  />
+  <a *ngIf="!loading && fileUrl" href="{{ fileUrl }}" target="_blank">
+    <div
+      class="px-3 py-2 bg-blue-500 hover:bg-blue-600 transition-colors rounded shadow-md text-white flex items-center justify-center cursor-pointer"
+    >
+      <mat-icon
+        svgIcon="eye"
+        class="text-white flex items-center justify-center"
+      ></mat-icon>
+      <span class="ml-2">view file</span>
+    </div>
+  </a>
+</div>

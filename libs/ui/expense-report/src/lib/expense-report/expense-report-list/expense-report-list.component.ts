@@ -95,7 +95,10 @@ export class ExpenseReportListComponent implements OnInit {
                     (project) => project.id === expenseReport.projectId
                   )?.name ?? 'No project',
                 totalAmount: expenseReport.totalAmount,
-                status: ExpenseReportStatus[expenseReport.status],
+                status:
+                  expenseReport.status !== undefined
+                    ? ExpenseReportStatus[expenseReport.status]
+                    : 'No status',
                 actions: {
                   href: `/expense-reports/edit/${expenseReport.id}`,
                   icon: 'edit',

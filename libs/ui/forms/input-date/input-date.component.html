@@ -1,0 +1,22 @@
+<mat-form-field class="w-full">
+  <mat-label>
+    {{ label }}
+  </mat-label>
+  <input
+    matInput
+    [min]="minDate"
+    [max]="maxDate"
+    [matDatepicker]="picker"
+    [value]="value"
+    [formControl]="dateFormControl"
+    (dateChange)="onChangeValue($event)"
+  />
+  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker #picker></mat-datepicker>
+  <mat-error
+    *ngIf="dateFormControl.hasError('required')"
+    class="font-normal text-xs mt-1"
+  >
+    {{ label }} is <strong class="font-bold">required</strong>
+  </mat-error>
+</mat-form-field>
