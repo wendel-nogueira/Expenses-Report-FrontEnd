@@ -1,0 +1,24 @@
+<mat-form-field class="w-full">
+  <mat-label>
+    {{ label }}
+  </mat-label>
+  <input
+    type="text"
+    matInput
+    [formControl]="moneyFormControl"
+    [errorStateMatcher]="matcher"
+    placeholder="Ex. 100.00"
+    minlength="2"
+    maxlength="10"
+    name="money"
+    [value]="value"
+    (change)="onChangeValue($event)"
+    (input)="onInputChange($event)"
+  />
+  <mat-error
+    *ngIf="moneyFormControl.hasError('required')"
+    class="font-normal text-xs mt-1"
+  >
+    {{ label }} is <strong class="font-bold">required</strong>
+  </mat-error>
+</mat-form-field>

@@ -13,6 +13,7 @@ import { IdentityService } from '../../../../../../services/identity/identity.se
 import { UserService } from '../../../../../../services/user/user.service';
 import { AuthService } from '../../../../../../services/auth/auth.service';
 import { RedirectButtonComponent } from '../../../../../buttons/redirect-button/redirect-button.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'lib-users-list',
@@ -27,6 +28,7 @@ import { RedirectButtonComponent } from '../../../../../buttons/redirect-button/
     InputSearchComponent,
     TableComponent,
     RedirectButtonComponent,
+    RouterModule,
   ],
 })
 export class UsersListComponent implements OnInit {

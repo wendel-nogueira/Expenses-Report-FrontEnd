@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { ExpenseReportService } from 'libs/services/expense-report/expense-report.service';
@@ -25,6 +25,11 @@ import { Project } from 'libs/models/Project';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { Expense } from 'libs/models/Expense';
+import { AuthService } from 'libs/services/auth/auth.service';
+import { UserService } from 'libs/services/user/user.service';
+import { ExpenseNewComponent } from 'libs/ui/expense/src/lib/expense/expense-new/expense-new.component';
+import { ExpenseAccount } from 'libs/models/ExpenseAccount';
+import { ExpenseAccountService } from 'libs/services/expense-account/expense-account.service';
 
 @Component({
   selector: 'lib-expense-report-new',
@@ -47,32 +52,57 @@ import { Expense } from 'libs/models/Expense';
     MatSnackBarModule,
     MatExpansionModule,
     MatIconModule,
+    ExpenseNewComponent,
   ],
 })
-export class ExpenseReportNewComponent {
-  departament = '';
-  departamentIsInvalid = true;
-  project = '';
-  projectIsInvalid = true;
-  totalAmount = 0;
-  totalAmountIsInvalid = false;
-
+export class ExpenseReportNewComponent implements OnInit {
   allDepartaments: Departament[] = [];
   departaments: SelectOption[] = [];
   allProjects: Project[] = [];
   projects: SelectOption[] = [];
+  createExpense = false;
 
-  expenses: Expense[] = [];
+  expenseReport: ExpenseReport = {
+    userId: '',
+    departamentId: '',
+    projectId: '',
+    totalAmount: 0,
+    expenses: [],
+  };
+  departamentIsInvalid = true;
+  projectIsInvalid = true;
+
+  allExpenseAccounts: ExpenseAccount[] = [];
 
   constructor(
+    private authService: AuthService,
+    private usersService: UserService,
     private expenseReportService: ExpenseReportService,
     private departamentService: DepartamentService,
     private projectService: ProjectService,
     private router: Router,
+    private expenseAccountService: ExpenseAccountService,
     private matSnackBar: MatSnackBar
   ) {
     this.getDepartaments();
     this.getProjects();
+  }
+
+  ngOnInit(): void {
+    const identity = this.authService.getIdentity();
+
+    if (identity)
+      this.usersService
+        .getUserByIdentityId(identity.nameid)
+        .subscribe((user) => {
+          this.expenseReport.userId = user.id as string;
+        });
+
+    this.expenseAccountService
+      .getExpenseAccounts()
+      .subscribe((expenseAccounts) => {
+        this.allExpenseAccounts = expenseAccounts;
+      });
   }
 
   getDepartaments() {
@@ -101,7 +131,7 @@ export class ExpenseReportNewComponent {
   }
 
   departamentChangeValue(departament: string) {
-    this.departament = departament;
+    this.expenseReport.departamentId = departament;
 
     if (this.departamentIsInvalid) return;
 
@@ -110,7 +140,7 @@ export class ExpenseReportNewComponent {
     this.allProjects.forEach((project) => {
       if (project.isDeleted) return;
 
-      if (project.departamentId === this.departament) {
+      if (project.departamentId === this.expenseReport.departamentId) {
         allProjects.push({
           value: project.id as string,
           viewValue: project.name,
@@ -119,36 +149,28 @@ export class ExpenseReportNewComponent {
     });
 
     this.projects = allProjects;
-    this.project = '';
+    this.expenseReport.projectId = '';
     this.projectIsInvalid = true;
   }
 
-  onAddExpense(event: Event) {
-    console.log(event);
-    event.preventDefault();
-    console.log('Add expense');
+  onAddExpense(expense: Expense) {
+    this.expenseReport.expenses.push(expense);
+    this.expenseReport.totalAmount += expense.amount;
 
-    const expense: Expense = {
-      id: '',
-      amount: 0,
-      explanation: '',
-      dateIncurred: new Date(),
-    };
-
-    this.expenses.push(expense);
+    this.createExpense = false;
   }
 
   onRemoveExpense(expense: Expense) {
-    console.log('Remove expense');
-    console.log(expense);
+    const index = this.expenseReport.expenses.indexOf(expense);
+
+    if (index > -1) {
+      this.expenseReport.expenses.splice(index, 1);
+      this.expenseReport.totalAmount -= expense.amount;
+    }
   }
 
   onSubmit() {
-    if (
-      this.departamentIsInvalid ||
-      this.projectIsInvalid ||
-      this.totalAmountIsInvalid
-    ) {
+    if (this.departamentIsInvalid || this.projectIsInvalid) {
       this.matSnackBar.open(
         'Invalid fields! Check that the fields have been filled in correctly.',
         '',
@@ -160,5 +182,35 @@ export class ExpenseReportNewComponent {
 
       return;
     }
+
+    if (this.expenseReport.expenses.length === 0) {
+      this.matSnackBar.open('You must add at least one expense.', '', {
+        duration: 4000,
+        panelClass: ['red-snackbar'],
+      });
+
+      return;
+    }
+
+    this.expenseReportService.createExpenseReport(this.expenseReport).subscribe(
+      () => {
+        this.matSnackBar.open('Expense Report created successfully!', '', {
+          duration: 4000,
+          panelClass: ['green-snackbar'],
+        });
+
+        this.router.navigate(['/expense-reports']);
+      },
+      (error) => {
+        this.matSnackBar.open(error.message, '', {
+          duration: 4000,
+          panelClass: ['red-snackbar'],
+        });
+      }
+    );
+  }
+
+  findExpenseAccountById(id: string) {
+    return this.allExpenseAccounts.find((ea) => ea.id === id);
   }
 }

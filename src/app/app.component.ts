@@ -156,5 +156,11 @@ export class AppComponent {
         '../assets/bank.svg'
       )
     );
+    this.matIconRegistry.addSvgIcon(
+      'upload',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/upload-regular.svg'
+      )
+    );
   }
 }

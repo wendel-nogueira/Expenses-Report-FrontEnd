@@ -79,9 +79,7 @@ export class SecurityComponent implements OnInit {
     }
   }
 
-  onSubmitChangeEmail(event: Event) {
-    event.preventDefault();
-
+  onSubmitChangeEmail() {
     if (this.newEmailIsInvalid || this.confirmNewEmailIsInvalid) {
       this.matSnackBar.open('Invalid fields! Check that the fields have been filled in correctly.', '', {
         duration: 4000,
