@@ -1,4 +1,6 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { Route } from '@angular/router';
+import { FieldStaffGuard } from 'libs/guard/fieldStaff/field-staff.guard';
 
 export const expenseReportRoutes: Route[] = [
   {
@@ -16,6 +18,7 @@ export const expenseReportRoutes: Route[] = [
         './expense-report/expense-report-new/expense-report-new.component'
       ).then((m) => m.ExpenseReportNewComponent),
     pathMatch: 'full',
+    canActivate: [FieldStaffGuard],
   },
   {
     path: 'edit/:id',

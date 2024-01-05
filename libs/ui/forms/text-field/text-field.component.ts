@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
@@ -23,12 +30,22 @@ export class TextFieldComponent implements OnChanges {
   @Input() value = '';
   @Input() name = '';
   @Input() placeholder = '';
+  @Input() disabled = false;
   @Output() changeValue = new EventEmitter();
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['value']) {
       this.value = changes['value'].currentValue;
       this.textFieldFormControl.setValue(this.value);
+    }
+
+    if (changes['disabled']) {
+      this.disabled = changes['disabled'].currentValue;
+      if (this.disabled) {
+        this.textFieldFormControl.disable();
+      } else {
+        this.textFieldFormControl.enable();
+      }
     }
   }
 

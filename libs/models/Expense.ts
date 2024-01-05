@@ -6,7 +6,7 @@ export interface Expense {
     dateIncurredTimeZone?: string;
     explanation: string;
     status?: number;
-    actionById?: string;
+    actionBy?: string;
     actionDate?: Date;
     actionDateTimeZone?: string;
     accountingNotes?: string;

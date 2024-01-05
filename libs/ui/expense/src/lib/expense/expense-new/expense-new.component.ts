@@ -72,7 +72,6 @@ export class ExpenseNewComponent implements OnInit {
     this.expenseAccountService
       .getExpenseAccounts()
       .subscribe((expenseAccounts) => {
-        console.log(expenseAccounts);
         this.allExpenseAccounts = expenseAccounts;
 
         expenseAccounts.forEach((expenseAccount) => {

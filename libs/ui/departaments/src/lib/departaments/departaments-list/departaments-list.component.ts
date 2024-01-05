@@ -12,6 +12,8 @@ import { InputSearchComponent } from '../../../../../forms/input-search/input-se
 import { DepartamentService } from './../../../../../../services/departament/departament.service';
 import { AuthService } from '../../../../../../services/auth/auth.service';
 import { UserService } from '../../../../../../services/user/user.service';
+import { ExportService } from '../../../../../../services/export/export.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'lib-departaments-list',
@@ -26,6 +28,7 @@ import { UserService } from '../../../../../../services/user/user.service';
     RouterModule,
     InputSearchComponent,
     TableComponent,
+    MatProgressSpinnerModule,
   ],
 })
 export class DepartamentsListComponent implements OnInit {
@@ -45,10 +48,13 @@ export class DepartamentsListComponent implements OnInit {
   isAccountant = false;
   userId = '';
 
+  loadingExport = false;
+
   constructor(
     private departamentService: DepartamentService,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private exportService: ExportService
   ) {
     this.searchValue = '';
 
@@ -138,6 +144,22 @@ export class DepartamentsListComponent implements OnInit {
     else this.data = new MatTableDataSource<rows>(this.rowsFiltered);
 
     this.loading = false;
+  }
+
+  exportData() {
+    this.loadingExport = true;
+
+    this.exportService.exportDepartments().subscribe((data) => {
+      const uri = data.uri as string;
+
+      window.open(uri);
+      
+      this.loadingExport = false;
+    }, (error) => {
+      console.log(error);
+
+      this.loadingExport = false;
+    });
   }
 }
 

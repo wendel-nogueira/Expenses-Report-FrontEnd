@@ -15,6 +15,9 @@ import { UserService } from '../../../../../../services/user/user.service';
 import { DepartamentService } from '../../../../../../services/departament/departament.service';
 import { ProjectService } from '../../../../../../services/project/project.service';
 import { ExpenseReportStatus } from '../../../../../../enums/ExpenseReportStatus';
+import { ExportService } from '../../../../../../services/export/export.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AuthService } from '../../../../../../services/auth/auth.service';
 
 @Component({
   selector: 'lib-expense-report-list',
@@ -29,6 +32,7 @@ import { ExpenseReportStatus } from '../../../../../../enums/ExpenseReportStatus
     RouterModule,
     InputSearchComponent,
     TableComponent,
+    MatProgressSpinnerModule,
   ],
 })
 export class ExpenseReportListComponent implements OnInit {
@@ -47,11 +51,16 @@ export class ExpenseReportListComponent implements OnInit {
 
   data: MatTableDataSource<rows>;
 
+  loadingExport = false;
+  isFieldStaff = false;
+
   constructor(
     private expenseReportService: ExpenseReportService,
     private userService: UserService,
     private departamentService: DepartamentService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private exportService: ExportService,
+    private authService: AuthService
   ) {
     this.searchValue = '';
 
@@ -59,6 +68,10 @@ export class ExpenseReportListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const role = this.authService.getIdentity()?.role as string;
+
+    this.isFieldStaff = role === 'FieldStaff';
+
     this.getExpenseReports();
   }
 
@@ -97,7 +110,7 @@ export class ExpenseReportListComponent implements OnInit {
                 totalAmount: expenseReport.totalAmount,
                 status:
                   expenseReport.status !== undefined
-                    ? ExpenseReportStatus[expenseReport.status]
+                    ? this.findStatusByEnum(expenseReport.status)
                     : 'No status',
                 actions: {
                   href: `/expense-reports/edit/${expenseReport.id}`,
@@ -135,6 +148,30 @@ export class ExpenseReportListComponent implements OnInit {
     else this.data = new MatTableDataSource<rows>(this.rowsFiltered);
 
     this.loading = false;
+  }
+
+  findStatusByEnum(status: number) {
+    if (status === 1) return 'Approved by supervisor';
+    else if (status === 2) return 'Rejected by supervisor';
+    else if (status === 4) return 'Payment rejected';
+
+    return ExpenseReportStatus[status];
+  }
+
+  exportData() {
+    this.loadingExport = true;
+
+    this.exportService.exportExpenseReports().subscribe((data) => {
+      const uri = data.uri as string;
+
+      window.open(uri);
+
+      this.loadingExport = false;
+    }, (error) => {
+      console.log(error);
+
+      this.loadingExport = false;
+    });
   }
 }
 

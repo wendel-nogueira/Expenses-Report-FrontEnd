@@ -14,6 +14,8 @@ import { UserService } from '../../../../../../services/user/user.service';
 import { AuthService } from '../../../../../../services/auth/auth.service';
 import { RedirectButtonComponent } from '../../../../../buttons/redirect-button/redirect-button.component';
 import { RouterModule } from '@angular/router';
+import { ExportService } from '../../../../../../services/export/export.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'lib-users-list',
@@ -29,6 +31,7 @@ import { RouterModule } from '@angular/router';
     TableComponent,
     RedirectButtonComponent,
     RouterModule,
+    MatProgressSpinnerModule,
   ],
 })
 export class UsersListComponent implements OnInit {
@@ -52,10 +55,13 @@ export class UsersListComponent implements OnInit {
   isAccountant = false;
   isManager = false;
 
+  loadingExport = false;
+
   constructor(
     private identityService: IdentityService,
     private userService: UserService,
-    private authService: AuthService
+    private authService: AuthService,
+    private exportService: ExportService
   ) {
     this.searchValue = '';
 
@@ -137,8 +143,20 @@ export class UsersListComponent implements OnInit {
     this.loading = false;
   }
 
-  checkIsRelated(userId: string) {
+  exportData() {
+    this.loadingExport = true;
 
+    this.exportService.exportUsers().subscribe((data) => {
+      const uri = data.uri as string;
+
+      window.open(uri);
+
+      this.loadingExport = false;
+    }, (error) => {
+      console.log(error);
+
+      this.loadingExport = false;
+    });
   }
 }
 

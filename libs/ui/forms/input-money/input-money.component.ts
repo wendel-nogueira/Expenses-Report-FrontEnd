@@ -47,18 +47,20 @@ export class InputMoneyComponent {
 
   onInputChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    let formattedValue = value.replace(/[^0-9.]/g, '');
-    const decimalParts = formattedValue.split('.');
 
-    if (decimalParts.length > 1) {
-      decimalParts[1] = decimalParts[1].slice(0, 2);
+    if (value !== '') {
+      let formattedValue = value.replace(/[^0-9.]/g, '');
+      const decimalParts = formattedValue.split('.');
+
+      if (decimalParts.length > 1) {
+        decimalParts[1] = decimalParts[1].slice(0, 2);
+      }
+
+      formattedValue = decimalParts.join('.');
+
+      (event.target as HTMLInputElement).value = formattedValue;
+
+      this.moneyFormControl.setValue(formattedValue);
     }
-
-    formattedValue = decimalParts.join('.');
-
-    (event.target as HTMLInputElement).value = formattedValue.replace(
-      /\B(?=(\d{3})+(?!\d))/g,
-      ','
-    );
   }
 }

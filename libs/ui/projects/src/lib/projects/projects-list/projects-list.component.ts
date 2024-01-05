@@ -14,6 +14,8 @@ import { DepartamentService } from './../../../../../../services/departament/dep
 import { AuthService } from '../../../../../../services/auth/auth.service';
 import { Departament } from '../../../../../../models/Departament';
 import { UserService } from '../../../../../../services/user/user.service';
+import { ExportService } from '../../../../../../services/export/export.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'lib-projects-list',
@@ -28,6 +30,7 @@ import { UserService } from '../../../../../../services/user/user.service';
     RouterModule,
     InputSearchComponent,
     TableComponent,
+    MatProgressSpinnerModule,
   ],
 })
 export class ProjectsListComponent implements OnInit {
@@ -50,11 +53,14 @@ export class ProjectsListComponent implements OnInit {
   userId = '';
   departaments: Departament[] = [];
 
+  loadingExport = false;
+
   constructor(
     private projectService: ProjectService,
     private departamentService: DepartamentService,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private exportService: ExportService
   ) {
     this.searchValue = '';
 
@@ -136,6 +142,22 @@ export class ProjectsListComponent implements OnInit {
     else this.data = new MatTableDataSource<rows>(this.rowsFiltered);
 
     this.loading = false;
+  }
+
+  exportData() {
+    this.loadingExport = true;
+
+    this.exportService.exportProjects().subscribe((data) => {
+      const uri = data.uri as string;
+
+      window.open(uri);
+
+      this.loadingExport = false;
+    }, (error) => {
+      console.log(error);
+
+      this.loadingExport = false;
+    });
   }
 }
 
