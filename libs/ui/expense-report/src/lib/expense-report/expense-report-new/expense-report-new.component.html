@@ -1,14 +1,27 @@
 <div>
   <div
-    class="w-full h-full flex flex-col items-center gap-8"
+    class="w-full h-full flex flex-col items-center gap-8 px-2 sm:px-10"
     *ngIf="!createExpense"
   >
-    <app-header
-      [title]="'create new expense report'"
-      [subtitle]="'use the form below to create a new expense report'"
-    />
-    <app-content class="w-full">
-      <app-form class="w-full">
+    <div class="w-full mt-6 flex flex-row justify-between items-center">
+      <app-flat-button
+        [label]="'create report'"
+        [icon]="'add'"
+        [type]="'success'"
+        (clickButton)="onSubmit()"
+        class="w-max"
+      ></app-flat-button>
+      <app-flat-button
+        [label]="'expense'"
+        [icon]="'file'"
+        [type]="'success'"
+        (clickButton)="createExpense = true"
+        class="w-max"
+      ></app-flat-button>
+    </div>
+
+    <div class="w-full flex flex-col gap-4 bg-white rounded shadow-md p-6">
+      <app-form class="w-full max-w-2xl m-auto">
         <app-form-group class="w-full">
           <app-select
             [label]="'Departament'"
@@ -25,104 +38,25 @@
             class="w-full"
           />
         </app-form-group>
-        <div
-          class="w-full h-fit flex flex-col gap-4 p-2 rounded-md bg-gray-100 border border-gray-200"
-        >
-          <p class="text-lg font-bold text-gray-700 text-center">Expenses</p>
-          <p class="text-sm font-bold text-gray-700 text-center">
-            Total:
-            <span class="text-green-500"
-              >${{ expenseReport.totalAmount.toFixed(2) }}</span
-            >
-          </p>
-
-          <div class="w-full h-full flex flex-col gap-3">
-            <div class="w-full h-12 bg-white rounded shadow-md">
-              <div
-                class="w-full h-full flex flex-row justify-between items-center"
-              >
-                <p class="text-sm font-bold text-gray-700 ml-4">
-                  Insert new expense
-                </p>
-
-                <button
-                  mat-flat-button
-                  class="w-12 h-12 flex flex-row justify-center items-center rounded cursor-pointer bg-blue-500 hover:bg-blue-600 transition-colors"
-                  (click)="createExpense = true"
-                >
-                  <mat-icon class="text-white">add</mat-icon>
-                </button>
-              </div>
-            </div>
-            <div id="expenses" class="w-full h-96 overflow-y-auto">
-              <mat-expansion-panel
-                *ngFor="let expense of expenseReport.expenses"
-                class="w-full h-fit bg-gray-100 rounded shadow-md"
-              >
-                <mat-expansion-panel-header class="w-full bg-white">
-                  <mat-panel-title>
-                    <p class="text-sm font-bold text-yellow-500 text-center">
-                      ${{ expense.amount.toFixed(2) }}
-                    </p>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-                <div class="w-full h-full flex flex-col gap-2">
-                  <p class="text-sm font-bold text-gray-700">
-                    Expense Account:
-                    <span class="text-gray-500 font-medium">{{
-                      findExpenseAccountById(expense.expenseAccount)
-                        ? findExpenseAccountById(expense.expenseAccount)!.name
-                        : 'No expense account'
-                    }}</span>
-                  </p>
-                  <p class="text-sm font-bold text-gray-700">
-                    Amount:
-                    <span class="text-gray-500 font-medium"
-                      >${{ expense.amount.toFixed(2) }}</span
-                    >
-                  </p>
-                  <p class="text-sm font-bold text-gray-700">
-                    Date Incurred:
-                    <span class="text-gray-500 font-medium">{{
-                      expense.dateIncurred
-                        | date : 'mediumDate' || 'No date incurred'
-                    }}</span>
-                  </p>
-                  <p class="text-sm font-bold text-gray-700">
-                    Explanation:
-                    <span class="text-gray-500 font-medium">{{
-                      expense.explanation || 'No explanation'
-                    }}</span>
-                  </p>
-                  <p class="text-sm font-bold text-gray-700 flex items-center justify-self-start">
-                    Receipt:
-                    <a href="{{ expense.receipt }}" target="_blank">
-                      <span class="text-blue-500 font-bold ml-1">view</span>
-                    </a>
-                  </p>
-                  <app-flat-button
-                    [label]="'remove'"
-                    [icon]="'trash'"
-                    [type]="'danger'"
-                    (clickButton)="onRemoveExpense(expense)"
-                    class="w-full mt-2"
-                  ></app-flat-button>
-                </div>
-              </mat-expansion-panel>
-            </div>
-          </div>
-        </div>
-        <app-button-group class="w-full">
-          <app-flat-button
-            [label]="'create'"
-            [icon]="'add'"
-            [type]="'success'"
-            (clickButton)="onSubmit()"
-            class="w-full"
-          ></app-flat-button>
-        </app-button-group>
       </app-form>
-    </app-content>
+
+      <div class="w-full">
+        <p class="font-medium text-gray-700">
+          Total Expenses:
+          <span class="text-yellow-500 font-normal"
+            >${{ expenseReport.totalAmount.toFixed(2) }}</span
+          >
+        </p>
+      </div>
+
+      <app-table
+        [loading]="false"
+        [tableColumns]="columns"
+        [dataSource]="data"
+        [ariaLabel]="'Select page of expenses'"
+        class="w-full"
+      ></app-table>
+    </div>
   </div>
   <div class="w-full h-full" *ngIf="createExpense">
     <lib-expense-new
@@ -130,4 +64,5 @@
       (cancelCreate)="createExpense = false"
     ></lib-expense-new>
   </div>
+  
 </div>

@@ -3,5 +3,6 @@ export interface Signature {
     name: string;
     acceptance: boolean;
     signatureDate: Date;
+    signatureDateTimeZone?: string;
     ipAddress: string;
 }

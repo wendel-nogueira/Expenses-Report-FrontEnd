@@ -1,0 +1,42 @@
+<div class="w-full h-full p-6">
+  <h2 class="text-xl font-medium text-center text-slate-600 mb-2">
+    sign expense report
+  </h2>
+  <p class="text-center text-gray-700 mb-6">
+    use your signature to sign the expense report
+  </p>
+
+  <app-form class="w-full">
+    <app-form-group class="w-full">
+      <app-input-text
+        [value]="this.signature.name"
+        [label]="'Name'"
+        [name]="'name'"
+        [placeholder]="'Ex. John Doe'"
+        [minLength]="2"
+        [maxLength]="50"
+        (changeValue)="this.signature.name = $event"
+        (isInvalid)="nameIsInvalid = $event"
+        class="w-full"
+      />
+    </app-form-group>
+    <app-form-group class="w-full">
+      <mat-checkbox
+        color="primary"
+        [checked]="this.signature.acceptance"
+        (change)="this.signature.acceptance = $event.checked"
+        >I agree to accept and sign this expense report</mat-checkbox
+      >
+    </app-form-group>
+
+    <app-button-group class="w-full">
+      <app-flat-button
+        [label]="'sign'"
+        [icon]="'signature'"
+        [type]="'success'"
+        (clickButton)="signExpenseReport()"
+        class="w-full max-w-sm"
+      ></app-flat-button>
+    </app-button-group>
+  </app-form>
+</div>

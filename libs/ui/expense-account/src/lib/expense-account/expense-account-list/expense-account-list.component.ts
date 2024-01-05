@@ -11,6 +11,8 @@ import {
   tableColumns,
 } from '../../../../../data-table/table/table.component';
 import { ExpenseAccountService } from '../../../../../../services/expense-account/expense-account.service';
+import { ExportService } from '../../../../../../services/export/export.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'lib-expense-account-list',
@@ -25,6 +27,7 @@ import { ExpenseAccountService } from '../../../../../../services/expense-accoun
     RouterModule,
     InputSearchComponent,
     TableComponent,
+    MatProgressSpinnerModule,
   ],
 })
 export class ExpenseAccountListComponent implements OnInit {
@@ -42,8 +45,11 @@ export class ExpenseAccountListComponent implements OnInit {
 
   data: MatTableDataSource<rows>;
 
+  loadingExport = false;
+
   constructor(
     private expenseAccountService: ExpenseAccountService,
+    private exportService: ExportService
   ) {
     this.searchValue = '';
 
@@ -94,6 +100,22 @@ export class ExpenseAccountListComponent implements OnInit {
     else this.data = new MatTableDataSource<rows>(this.rowsFiltered);
 
     this.loading = false;
+  }
+
+  exportData() {
+    this.loadingExport = true;
+
+    this.exportService.exportExpenseAccounts().subscribe((data) => {
+      const uri = data.uri as string;
+
+      window.open(uri);
+
+      this.loadingExport = false;
+    }, (error) => {
+      console.log(error);
+
+      this.loadingExport = false;
+    });
   }
 }
 

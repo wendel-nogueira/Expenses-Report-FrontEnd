@@ -25,11 +25,18 @@ export class ExpenseReportService {
       .pipe(retry(2), catchError(this.handleError));
   }
 
-  createExpenseReport(
-    expenseReport: ExpenseReport
-  ): Observable<ExpenseReport> {
+  createExpenseReport(expenseReport: ExpenseReport): Observable<ExpenseReport> {
     return this.httpClient
       .post<ExpenseReport>(this.apiURL, JSON.stringify(expenseReport))
+      .pipe(retry(2), catchError(this.handleError));
+  }
+
+  updateExpenseReport(expenseReport: ExpenseReport): Observable<ExpenseReport> {
+    return this.httpClient
+      .put<ExpenseReport>(
+        `${this.apiURL}/${expenseReport.id}`,
+        JSON.stringify(expenseReport)
+      )
       .pipe(retry(2), catchError(this.handleError));
   }
 

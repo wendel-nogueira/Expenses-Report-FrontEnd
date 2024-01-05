@@ -56,6 +56,10 @@ export class RecoveryPassComponent {
           duration: 4000,
           panelClass: ['red-snackbar'],
         });
+        this.isLoading = false;
+        this.resetPasswordEmail = '';
+        this.resetPasswordEmailIsInvalid = true;
+        this.cancelIsClicked.emit();
       },
       () => {
         this.isLoading = false;

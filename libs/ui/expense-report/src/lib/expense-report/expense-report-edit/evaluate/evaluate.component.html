@@ -1,0 +1,36 @@
+<div class="w-full h-full p-6">
+  <h2 class="text-xl font-medium text-center text-slate-600 mb-2">
+    evaluate expense report
+  </h2>
+  <p class="text-center text-gray-700 mb-6">
+    use the following options to approve or reject the expense report
+  </p>
+
+  <app-form class="w-full">
+    <app-form-group class="w-full">
+      <app-text-field
+        [value]="''"
+        [label]="'Notes'"
+        (changeValue)="notes = $event"
+        class="w-full"
+      />
+    </app-form-group>
+
+    <app-button-group class="w-full">
+      <app-flat-button
+        [label]="'approve'"
+        [icon]="'check'"
+        [type]="'success'"
+        (clickButton)="onSubmit(1)"
+        class="w-full max-w-sm"
+      ></app-flat-button>
+      <app-flat-button
+        [label]="'reject'"
+        [icon]="'cancel'"
+        [type]="'danger'"
+        (clickButton)="onSubmit(2)"
+        class="w-full max-w-sm"
+      ></app-flat-button>
+    </app-button-group>
+  </app-form>
+</div>

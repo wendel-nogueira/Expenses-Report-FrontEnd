@@ -1,13 +1,73 @@
 <div>
   <div
-    class="w-full h-full flex flex-col items-center gap-8"
-    *ngIf="!viewExpense"
+    class="w-full h-full flex flex-col items-center gap-8 px-2 sm:px-10 mt-6 lg:mt-0"
+    *ngIf="!createExpense"
   >
-    <app-header
-      [title]="'expense report'"
-      [subtitle]="'use the form below to create a new expense report'"
-    />
-    <app-content class="w-full">
+    <div
+      class="w-full flex items-center justify-between flex-col sm:flex-row gap-4"
+    >
+      <app-button-group class="w-full sm:w-max">
+        <app-flat-button
+          *ngIf="!loading && allowEdit"
+          [label]="'update'"
+          [icon]="'edit'"
+          [type]="'info'"
+          (clickButton)="onSubmit()"
+          class="w-full max-w-sm"
+        ></app-flat-button>
+        <app-flat-button
+          [label]="'export'"
+          [icon]="'download'"
+          [type]="'info'"
+          [loading]="loadingExport"
+          (clickButton)="exportData()"
+          class="w-full max-w-sm"
+        ></app-flat-button>
+        <app-redirect-button
+          [label]="'cancel'"
+          [icon]="'cancel'"
+          [type]="'danger'"
+          [path]="'/expense-reports'"
+          class="w-full max-w-sm"
+        ></app-redirect-button>
+      </app-button-group>
+      <app-button-group class="w-full sm:w-max">
+        <app-flat-button
+          *ngIf="!loading"
+          [label]="'sign'"
+          [icon]="'signature'"
+          [type]="'info'"
+          (clickButton)="signExpenseReport()"
+          class="w-full max-w-sm"
+        ></app-flat-button>
+        <app-flat-button
+          *ngIf="expenseReport.status! === 0 && !loading && allowEvaluate"
+          [label]="'evaluate'"
+          [icon]="'receipt'"
+          [type]="'warning'"
+          (clickButton)="evaluateExpenseReport()"
+          class="w-full max-w-sm"
+        ></app-flat-button>
+        <app-flat-button
+          *ngIf="expenseReport.status! === 1 && !loading && allowPay"
+          [label]="'payment'"
+          [icon]="'coin'"
+          [type]="'success'"
+          (clickButton)="payExpenseReport()"
+          class="w-full max-w-sm"
+        ></app-flat-button>
+        <app-flat-button
+          *ngIf="expenseReport.status! === 0 && !loading && allowEdit"
+          [label]="'expense'"
+          [icon]="'file'"
+          [type]="'success'"
+          (clickButton)="createExpense = true"
+          class="w-full max-w-sm"
+        ></app-flat-button>
+      </app-button-group>
+    </div>
+
+    <div class="w-full flex flex-col gap-4 bg-white rounded shadow-md p-6">
       <app-form
         class="w-full"
         [loading]="
@@ -18,11 +78,12 @@
           !expenseReport
         "
       >
-        <app-form-group class="w-full">
+        <app-form-group class="w-full max-w-2xl m-auto">
           <app-select
             [label]="'Departament'"
             [options]="departaments"
             [value]="expenseReport.departamentId"
+            [isDisabled]="!allowEdit"
             (changeValue)="departamentChangeValue($event)"
             (isInvalid)="departamentIsInvalid = $event"
             class="w-full"
@@ -31,130 +92,140 @@
             [label]="'Project'"
             [options]="projects"
             [value]="expenseReport.projectId"
+            [isDisabled]="!allowEdit"
             (changeValue)="expenseReport.projectId = $event"
             (isInvalid)="projectIsInvalid = $event"
             class="w-full"
           />
         </app-form-group>
-        <div
-          class="w-full h-fit flex flex-col gap-4 p-2 rounded-md bg-gray-100 border border-gray-200"
-        >
-          <p class="text-lg font-bold text-gray-700 text-center">Expenses</p>
-          <div class="w-full flex flex-col gap-1 items-center justify-center">
-            <p class="text-sm font-bold text-gray-700 text-center">
-              Total:
-              <span class="text-blue-500"
-                >${{ expenseReport.totalAmount.toFixed(2) }}</span
-              >
-            </p>
-            <p class="text-sm font-bold text-gray-700 text-center">
-              Total Approved:
-              <span class="text-green-500"
-                >${{ expenseReport.amountApproved!.toFixed(2) }}</span
-              >
-            </p>
-            <p class="text-sm font-bold text-gray-700 text-center">
-              Total Rejected:
-              <span class="text-red-500"
-                >${{ expenseReport.amountRejected!.toFixed(2) }}</span
-              >
-            </p>
-          </div>
 
-          <div class="w-full h-full flex flex-col gap-3">
-            <div class="w-full h-12 bg-white rounded shadow-md">
-              <div
-                class="w-full h-full flex flex-row justify-between items-center"
-              >
-                <p class="text-sm font-bold text-gray-700 ml-4">
-                  Insert new expense
-                </p>
-
-                <button
-                  mat-flat-button
-                  class="w-12 h-12 flex flex-row justify-center items-center rounded cursor-pointer bg-blue-500 hover:bg-blue-600 transition-colors"
-                  (click)="viewExpense = true"
-                >
-                  <mat-icon class="text-white">add</mat-icon>
-                </button>
-              </div>
-            </div>
-            <div id="expenses" class="w-full h-96 overflow-y-auto">
-              <mat-expansion-panel
-                *ngFor="let expense of expenseReport.expenses"
-                class="w-full h-fit bg-gray-100 rounded shadow-md"
-              >
-                <mat-expansion-panel-header class="w-full bg-white">
-                  <mat-panel-title>
-                    <p class="text-sm font-bold text-yellow-500 text-center">
-                      ${{ expense.amount.toFixed(2) }}
-                    </p>
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-                <div class="w-full h-full flex flex-col gap-2">
-                  <p class="text-sm font-bold text-gray-700">
-                    Expense Account:
-                    <span class="text-gray-500 font-medium">{{
-                      findExpenseAccountById(expense.expenseAccount)
-                        ? findExpenseAccountById(expense.expenseAccount)!.name
-                        : 'No expense account'
-                    }}</span>
-                  </p>
-                  <p class="text-sm font-bold text-gray-700">
-                    Amount:
-                    <span class="text-gray-500 font-medium"
-                      >${{ expense.amount.toFixed(2) }}</span
-                    >
-                  </p>
-                  <p class="text-sm font-bold text-gray-700">
-                    Date Incurred:
-                    <span class="text-gray-500 font-medium">{{
-                      expense.dateIncurred
-                        | date : 'mediumDate' || 'No date incurred'
-                    }}</span>
-                  </p>
-                  <p class="text-sm font-bold text-gray-700">
-                    Explanation:
-                    <span class="text-gray-500 font-medium">{{
-                      expense.explanation || 'No explanation'
-                    }}</span>
-                  </p>
-                  <p
-                    class="text-sm font-bold text-gray-700 flex items-center justify-self-start"
-                  >
-                    Receipt:
-                    <a href="{{ expense.receipt }}" target="_blank">
-                      <span class="text-blue-500 font-bold ml-1">view</span>
-                    </a>
-                  </p>
-                  <app-flat-button
-                    [label]="'remove'"
-                    [icon]="'trash'"
-                    [type]="'danger'"
-                    (clickButton)="onRemoveExpense(expense)"
-                    class="w-full mt-2"
-                  ></app-flat-button>
-                </div>
-              </mat-expansion-panel>
-            </div>
-          </div>
+        <div class="w-full">
+          <p class="font-medium text-gray-700">
+            Total Expenses:
+            <span class="text-yellow-500 font-normal"
+              >${{ expenseReport.totalAmount.toFixed(2) }}</span
+            >
+          </p>
+          <p class="font-medium text-gray-700">
+            Total Approved:
+            <span class="text-green-500 font-normal"
+              >${{ expenseReport.amountApproved!.toFixed(2) }}</span
+            >
+          </p>
+          <p class="font-medium text-gray-700">
+            Total Rejected:
+            <span class="text-red-500 font-normal"
+              >${{ expenseReport.amountRejected!.toFixed(2) }}</span
+            >
+          </p>
+          <p class="font-medium text-gray-700">
+            Total Paid:
+            <span class="text-blue-500 font-normal"
+              >${{ expenseReport.amountPaid!.toFixed(2) }}</span
+            >
+          </p>
+          <p class="font-medium text-gray-700 mt-4">
+            Status:
+            <span
+              class="font-normal {{
+                expenseReport.status! === 0
+                  ? 'text-blue-500'
+                  : expenseReport.status! === 1 || expenseReport.status! === 3
+                  ? 'text-green-500'
+                  : 'text-red-500'
+              }}"
+            >
+              {{ findStatusByEnum(expenseReport.status!) }}
+            </span>
+          </p>
+          <p
+            *ngIf="expenseReport.statusNotes !== ''"
+            class="font-medium text-gray-700"
+          >
+            Notes:
+            <span class="font-normal">{{ expenseReport.statusNotes }}</span>
+          </p>
+          <p
+            *ngIf="expenseReport.status === 3"
+            class="font-medium text-gray-700 flex items-center gap-2"
+          >
+            Proof of payment:
+            <button
+              mat-icon-button
+              class="text-white w-7 h-7 rounded transition-colors mat-elevation-z2 flex justify-normal items-center bg-blue-400 hover:bg-blue-500"
+              (click)="showProofOfPayment(expenseReport.proofOfPayment!)"
+              style="padding: 0.25rem"
+            >
+              <mat-icon svgIcon="eye" class="svg-white"></mat-icon>
+            </button>
+          </p>
         </div>
-        <app-button-group class="w-full">
-          <app-flat-button
-            [label]="'create'"
-            [icon]="'add'"
-            [type]="'success'"
-            (clickButton)="onSubmit()"
-            class="w-full"
-          ></app-flat-button>
-        </app-button-group>
       </app-form>
-    </app-content>
+
+      <div class="w-full bg-slate-50 border border-slate-100 shadow-sm">
+        <div class="w-max flex items-center justify-center m-auto gap-4 p-2">
+          <p
+            class="m-0 {{
+              selected === 'expenses'
+                ? 'font-medium text-blue-500'
+                : 'font-light text-gray-700'
+            }} hover:text-blue-500 transition-colors cursor-pointer w-20 text-center"
+            style="margin: 0"
+            (click)="selected = 'expenses'"
+          >
+            Expenses
+          </p>
+          <p
+            class="m-0 {{
+              selected === 'signatures'
+                ? 'font-medium text-blue-500'
+                : 'font-light text-gray-700'
+            }} hover:text-blue-500 transition-colors cursor-pointer w-20 text-center"
+            style="margin: 0"
+            (click)="selected = 'signatures'"
+          >
+            Signatures
+          </p>
+        </div>
+      </div>
+
+      <div class="w-full h-full" *ngIf="selected === 'expenses'">
+        <app-table
+          [loading]="
+            loading ||
+            loadingDepartaments ||
+            loadingProjects ||
+            loadingExpenseAccounts ||
+            !expenseReport
+          "
+          [tableColumns]="columnsExpenses"
+          [dataSource]="dataExpenses"
+          [ariaLabel]="'Select page of expenses'"
+          class="w-full"
+        ></app-table>
+      </div>
+
+      <div class="w-full h-full" *ngIf="selected === 'signatures'">
+        <app-table
+          [loading]="
+            loading ||
+            loadingDepartaments ||
+            loadingProjects ||
+            loadingExpenseAccounts ||
+            !expenseReport
+          "
+          [tableColumns]="columnsSignatures"
+          [dataSource]="dataSignatures"
+          [ariaLabel]="'Select page of signatures'"
+          class="w-full"
+        ></app-table>
+      </div>
+    </div>
   </div>
-  <div class="w-full h-full" *ngIf="viewExpense">
+  <div class="w-full h-full" *ngIf="createExpense">
     <lib-expense-new
       (expenseCreated)="onAddExpense($event)"
-      (cancelCreate)="viewExpense = false"
+      (cancelCreate)="createExpense = false"
     ></lib-expense-new>
   </div>
 </div>
