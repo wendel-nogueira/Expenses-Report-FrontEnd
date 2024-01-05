@@ -30,6 +30,11 @@ import { UserService } from 'libs/services/user/user.service';
 import { ExpenseNewComponent } from 'libs/ui/expense/src/lib/expense/expense-new/expense-new.component';
 import { ExpenseAccount } from 'libs/models/ExpenseAccount';
 import { ExpenseAccountService } from 'libs/services/expense-account/expense-account.service';
+import {
+  TableComponent,
+  tableColumns,
+} from 'libs/ui/data-table/table/table.component';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'lib-expense-report-new',
@@ -53,6 +58,8 @@ import { ExpenseAccountService } from 'libs/services/expense-account/expense-acc
     MatExpansionModule,
     MatIconModule,
     ExpenseNewComponent,
+
+    TableComponent,
   ],
 })
 export class ExpenseReportNewComponent implements OnInit {
@@ -74,9 +81,19 @@ export class ExpenseReportNewComponent implements OnInit {
 
   allExpenseAccounts: ExpenseAccount[] = [];
 
+  rows: rows[] = [];
+  columns: tableColumns[] = [
+    { name: 'expenseAccount', label: 'Expense Account' },
+    { name: 'amount', label: 'Amount' },
+    { name: 'dateIncurred', label: 'Date Incurred' },
+    { name: 'explanation', label: 'Explanation' },
+    { name: 'functions', label: 'Actions' },
+  ];
+  data: MatTableDataSource<rows>;
+
   constructor(
     private authService: AuthService,
-    private usersService: UserService,
+    private userService: UserService,
     private expenseReportService: ExpenseReportService,
     private departamentService: DepartamentService,
     private projectService: ProjectService,
@@ -86,13 +103,15 @@ export class ExpenseReportNewComponent implements OnInit {
   ) {
     this.getDepartaments();
     this.getProjects();
+
+    this.data = new MatTableDataSource<rows>(this.rows);
   }
 
   ngOnInit(): void {
     const identity = this.authService.getIdentity();
 
     if (identity)
-      this.usersService
+      this.userService
         .getUserByIdentityId(identity.nameid)
         .subscribe((user) => {
           this.expenseReport.userId = user.id as string;
@@ -157,6 +176,34 @@ export class ExpenseReportNewComponent implements OnInit {
     this.expenseReport.expenses.push(expense);
     this.expenseReport.totalAmount += expense.amount;
 
+    this.rows.push({
+      expenseAccount: this.findExpenseAccountById(expense.expenseAccount)
+        ?.name as string,
+      amount:
+        '$ ' + expense.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+      dateIncurred: new Date(expense.dateIncurred).toLocaleDateString(),
+      explanation: expense.explanation || 'No explanation',
+      functions: [
+        {
+          icon: 'eye',
+          style: 'bg-blue-400 hover:bg-blue-500',
+          function: () => {
+            if (!expense.receipt) return;
+            window.open(expense.receipt, '_blank');
+          },
+        },
+        {
+          icon: 'cancel',
+          style: 'bg-red-400 hover:bg-red-500',
+          function: () => {
+            this.onRemoveExpense(expense);
+          },
+        },
+      ],
+    });
+
+    this.data = new MatTableDataSource<rows>(this.rows);
+
     this.createExpense = false;
   }
 
@@ -166,6 +213,10 @@ export class ExpenseReportNewComponent implements OnInit {
     if (index > -1) {
       this.expenseReport.expenses.splice(index, 1);
       this.expenseReport.totalAmount -= expense.amount;
+
+      this.rows.splice(index, 1);
+
+      this.data = new MatTableDataSource<rows>(this.rows);
     }
   }
 
@@ -213,4 +264,18 @@ export class ExpenseReportNewComponent implements OnInit {
   findExpenseAccountById(id: string) {
     return this.allExpenseAccounts.find((ea) => ea.id === id);
   }
+}
+
+interface rows {
+  expenseAccount: string;
+  amount: string;
+  dateIncurred: string;
+  explanation: string;
+  functions?: functions[];
+}
+
+interface functions {
+  icon: string;
+  style: string;
+  function: () => void;
 }

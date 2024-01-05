@@ -118,7 +118,7 @@ export class HeaderComponent implements OnInit, OnChanges {
       {
         text: 'new',
         link: '/expense-reports/new',
-        show: true,
+        show: this.role === 'FieldStaff',
       },
       {
         text: 'list',

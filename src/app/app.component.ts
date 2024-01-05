@@ -162,5 +162,23 @@ export class AppComponent {
         '../assets/upload-regular.svg'
       )
     );
+    this.matIconRegistry.addSvgIcon(
+      'signature',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/signature-regular.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'coin',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/coin-regular.svg'
+      )
+    );
+    this.matIconRegistry.addSvgIcon(
+      'download',
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        '../assets/download-regular.svg'
+      )
+    );
   }
 }

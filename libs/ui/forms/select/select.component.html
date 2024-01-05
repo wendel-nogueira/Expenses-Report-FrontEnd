@@ -1,6 +1,6 @@
 <mat-form-field class="w-full">
   <mat-label>{{ label }}</mat-label>
-  <mat-select [formControl]="selectFormControl" [errorStateMatcher]="matcher" (selectionChange)="onChange($event)">
+  <mat-select [formControl]="selectFormControl" [errorStateMatcher]="matcher" (selectionChange)="onChange($event)" [disabled]="isDisabled">
     <mat-option *ngFor="let option of options" [value]="option.value">
       {{ option.viewValue }}
     </mat-option>

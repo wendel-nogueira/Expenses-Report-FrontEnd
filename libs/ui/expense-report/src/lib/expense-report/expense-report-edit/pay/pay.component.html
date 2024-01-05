@@ -1,0 +1,45 @@
+<div class="w-full h-full p-6">
+  <h2 class="text-xl font-medium text-center text-slate-600 mb-2">
+    pay expense report
+  </h2>
+  <p class="text-center text-gray-700 mb-6">
+    you can pay the expense report with the following options
+  </p>
+
+  <app-form class="w-full" [loading]="loading">
+    <app-form-group class="w-full">
+      <app-text-field
+        [value]="''"
+        [label]="'Notes'"
+        (changeValue)="expenseReport.statusNotes = $event"
+        class="w-full"
+      />
+    </app-form-group>
+    <app-form-group class="w-full">
+      <app-input-file
+        [value]="expenseReport.proofOfPayment!"
+        [label]="'Proof of payment'"
+        (changeValue)="expenseReport.proofOfPayment = $event"
+        (isInvalid)="proofOfPaymentIsInvalid = $event"
+        class="w-full"
+      />
+    </app-form-group>
+
+    <app-button-group class="w-full mt-2" *ngIf="!evaluated">
+      <app-flat-button
+        [label]="'approve'"
+        [icon]="'check'"
+        [type]="'success'"
+        (clickButton)="onSubmit(3)"
+        class="w-full max-w-sm"
+      ></app-flat-button>
+      <app-flat-button
+        [label]="'reject'"
+        [icon]="'cancel'"
+        [type]="'danger'"
+        (clickButton)="onSubmit(4)"
+        class="w-full max-w-sm"
+      ></app-flat-button>
+    </app-button-group>
+  </app-form>
+</div>

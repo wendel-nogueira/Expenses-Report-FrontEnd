@@ -1,4 +1,4 @@
-<div class="mat-elevation-z1 bg-white w-full pb-2" (window:resize)="onResize()">
+<div class="bg-white w-full pb-2" (window:resize)="onResize()">
   <div class="w-full overflow-x-scroll md:overflow-hidden">
     <table mat-table [dataSource]="dataSource">
       <ng-container
@@ -8,7 +8,7 @@
         <th mat-header-cell *matHeaderCellDef>{{ column.label }}</th>
 
         <td mat-cell *matCellDef="let element">
-          <ng-container *ngIf="column.name !== 'actions'">
+          <ng-container *ngIf="column.name !== 'actions' && column.name !== 'functions'">
             {{ element[column.name] }}
           </ng-container>
 
@@ -17,7 +17,7 @@
               <a [routerLink]="[element[column.name]['href']]">
                 <button
                   mat-icon-button
-                  class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 {{
+                  class="text-white rounded transition-colors mat-elevation-z2 flex justify-normal items-center py-2 px-3 w-7 h-7 {{
                     element[column.name]['style']
                   }}"
                 >
@@ -27,6 +27,24 @@
                   ></mat-icon>
                 </button>
               </a>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="column.name === 'functions'">
+            <div class="flex flex-row gap-2 items-center justify-center">
+              <button
+               *ngFor="let function of element[column.name]"
+                mat-icon-button
+                class="text-white w-7 h-7 rounded transition-colors mat-elevation-z2 flex justify-normal items-center {{
+                  function['style']
+                }}"
+                (click)="function['function']()"
+              >
+                <mat-icon
+                  svgIcon="{{ function['icon'] }}"
+                  class="svg-white"
+                ></mat-icon>
+              </button>
             </div>
           </ng-container>
         </td>
